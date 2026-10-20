@@ -3,17 +3,21 @@
  * Consome os endpoints da API FastAPI e interage com o Copiloto de IA
  */
 
+// URL pública padrão do Backend no Render
+const RENDER_PROD_URL = 'https://hackathon-2026-6ni3.onrender.com';
+
 // Detecta a URL base da API (suporte a localhost, Vercel e Render)
 function obterApiBase() {
   const isLocal = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
-  if (isLocal) {
+  const isRender = window.location.origin.includes('onrender.com');
+  if (isLocal || isRender) {
     return '';
   }
   const salva = localStorage.getItem('BVX_RENDER_API');
   if (salva) {
     return salva.replace(/\/$/, '');
   }
-  return '';
+  return RENDER_PROD_URL;
 }
 
 let API_BASE = obterApiBase();
@@ -22,12 +26,13 @@ function atualizarStatusConexaoApi() {
   const label = document.getElementById('api-status-label');
   if (!label) return;
   const isLocal = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
+  const isRender = window.location.origin.includes('onrender.com');
   if (isLocal) {
     label.innerText = 'API Local (8000)';
-  } else if (localStorage.getItem('BVX_RENDER_API')) {
-    label.innerText = 'Render Conectado';
+  } else if (isRender) {
+    label.innerText = 'Render Ativo';
   } else {
-    label.innerText = 'Conectar Render';
+    label.innerText = 'Render Conectado';
   }
 }
 
