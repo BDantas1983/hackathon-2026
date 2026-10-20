@@ -58,6 +58,10 @@ let filterBackupCritico = false;
 let filterVersaoAntiga = false;
 let selectedClient = null;
 
+// Instâncias Chart.js (controle de lifecycle)
+let chartRiskDoughnut = null;
+let chartRadarPillars = null;
+
 // ==================== INICIALIZAÇÃO ====================
 document.addEventListener('DOMContentLoaded', () => {
   atualizarStatusConexaoApi();
@@ -93,6 +97,13 @@ async function carregarEstatisticas() {
       maximumFractionDigits: 0
     }).format(data.faturamento_diario_monitorado);
     document.getElementById('total-revenue').innerText = faturamentoFormatado;
+
+    // === GRÁFICO DOUGHNUT: Distribuição de Risco ===
+    renderizarGraficoDoughnut(
+      data.distribuicao_risco.alto_risco,
+      data.distribuicao_risco.atencao,
+      data.distribuicao_risco.baixo_risco
+    );
 
   } catch (err) {
     console.error('Falha ao carregar KPIs:', err);
@@ -285,6 +296,11 @@ function selecionarCliente(cliente) {
   document.getElementById('sim-projected-score').innerText = cliente.health_score;
   document.getElementById('sim-diff-badge').innerText = '+0 pts';
   document.getElementById('sim-feedback-text').innerText = 'Selecione as ações acima para simular a recuperação do cliente.';
+
+  // === GRÁFICO RADAR: Atualiza pilares 360° ===
+  if (cliente.detalhe_subscores) {
+    renderizarGraficoRadar(cliente.detalhe_subscores);
+  }
 }
 
 // ==================== SIMULADOR DE IMPACTO ====================
@@ -464,5 +480,199 @@ function configurarEventos() {
         btn.innerHTML = original;
       }, 2000);
     });
+  });
+}
+
+// ==================== GRÁFICOS CHART.JS ====================
+
+function renderizarGraficoDoughnut(altoRisco, atencao, baixoRisco) {
+  const ctx = document.getElementById('chart-risk-doughnut');
+  if (!ctx) return;
+
+  if (chartRiskDoughnut) {
+    chartRiskDoughnut.destroy();
+  }
+
+  chartRiskDoughnut = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Alto Risco', 'Atenção', 'Saudável'],
+      datasets: [{
+        data: [altoRisco, atencao, baixoRisco],
+        backgroundColor: [
+          'rgba(220, 38, 38, 0.85)',
+          'rgba(217, 119, 6, 0.85)',
+          'rgba(22, 163, 74, 0.85)'
+        ],
+        borderColor: [
+          'rgba(220, 38, 38, 1)',
+          'rgba(217, 119, 6, 1)',
+          'rgba(22, 163, 74, 1)'
+        ],
+        borderWidth: 2,
+        hoverOffset: 8,
+        borderRadius: 4,
+        spacing: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#64748b',
+            font: {
+              family: "'Montserrat', sans-serif",
+              size: 12,
+              weight: '600'
+            },
+            padding: 16,
+            usePointStyle: true,
+            pointStyleWidth: 12
+          }
+        },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          titleFont: { family: "'Montserrat', sans-serif", weight: '700' },
+          bodyFont: { family: "'Open Sans', sans-serif" },
+          padding: 12,
+          cornerRadius: 8,
+          callbacks: {
+            label: function(context) {
+              const total = context.dataset.data.reduce((a, b) => a + b, 0);
+              const pct = ((context.parsed / total) * 100).toFixed(1);
+              return ` ${context.label}: ${context.parsed} clientes (${pct}%)`;
+            }
+          }
+        }
+      },
+      animation: {
+        animateRotate: true,
+        duration: 1000,
+        easing: 'easeOutQuart'
+      }
+    }
+  });
+}
+
+function renderizarGraficoRadar(subscores) {
+  const ctx = document.getElementById('chart-radar-pillars');
+  if (!ctx) return;
+
+  if (chartRadarPillars) {
+    chartRadarPillars.destroy();
+  }
+
+  const labels = ['Backup', 'Versionamento', 'Vendas', 'Chamados'];
+  const valores = [
+    subscores.backup,
+    subscores.versao,
+    subscores.vendas,
+    subscores.chamados
+  ];
+
+  // Benchmark "ideal" para comparação visual
+  const benchmark = [100, 100, 100, 100];
+
+  chartRadarPillars = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Cliente Atual',
+          data: valores,
+          backgroundColor: 'rgba(5, 102, 95, 0.20)',
+          borderColor: 'rgba(5, 102, 95, 0.9)',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#05665f',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          fill: true
+        },
+        {
+          label: 'Referência Ideal',
+          data: benchmark,
+          backgroundColor: 'rgba(0, 141, 133, 0.06)',
+          borderColor: 'rgba(0, 141, 133, 0.35)',
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          pointBackgroundColor: 'rgba(0, 141, 133, 0.5)',
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          fill: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 100,
+          ticks: {
+            stepSize: 25,
+            display: true,
+            color: '#94a3b8',
+            font: { size: 10, family: "'Open Sans', sans-serif" },
+            backdropColor: 'transparent'
+          },
+          grid: {
+            color: 'rgba(226, 232, 240, 0.6)',
+            lineWidth: 1
+          },
+          angleLines: {
+            color: 'rgba(226, 232, 240, 0.5)'
+          },
+          pointLabels: {
+            color: '#1e293b',
+            font: {
+              family: "'Montserrat', sans-serif",
+              size: 12,
+              weight: '700'
+            },
+            padding: 8
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#64748b',
+            font: {
+              family: "'Montserrat', sans-serif",
+              size: 11,
+              weight: '600'
+            },
+            padding: 14,
+            usePointStyle: true,
+            pointStyleWidth: 10
+          }
+        },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          titleFont: { family: "'Montserrat', sans-serif", weight: '700' },
+          bodyFont: { family: "'Open Sans', sans-serif" },
+          padding: 12,
+          cornerRadius: 8,
+          callbacks: {
+            label: function(context) {
+              return ` ${context.dataset.label}: ${context.parsed.r}/100`;
+            }
+          }
+        }
+      },
+      animation: {
+        duration: 800,
+        easing: 'easeOutQuart'
+      }
+    }
   });
 }

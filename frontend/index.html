@@ -15,6 +15,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -139,6 +142,17 @@
           <span class="kpi-number text-cyan" id="total-revenue">R$ --</span>
         </div>
         <span class="kpi-hint">Transacionado nos PDVs dos clientes</span>
+      </div>
+
+      <!-- Gráfico de Distribuição de Risco (Doughnut) -->
+      <div class="kpi-card chart-card" id="kpi-chart-risk">
+        <div class="kpi-header">
+          <span class="kpi-label">Distribuição de Risco da Carteira</span>
+          <span class="kpi-icon">📊</span>
+        </div>
+        <div class="chart-container-kpi">
+          <canvas id="chart-risk-doughnut"></canvas>
+        </div>
       </div>
     </section>
 
@@ -277,6 +291,20 @@
                   <div class="pillar-main-val" id="pillar-tickets-val">6 chamados</div>
                   <span class="pillar-status" id="pillar-tickets-status">Aumento Significativo (30d)</span>
                 </div>
+              </div>
+            </div>
+
+            <!-- Gráfico Radar dos 4 Pilares -->
+            <div class="chart-section-360">
+              <div class="chart-section-header">
+                <span class="chart-section-icon">📡</span>
+                <div>
+                  <h3 class="chart-section-title">Visão 360° dos Pilares</h3>
+                  <p class="chart-section-desc">Mapa radar dos subscores de telemetria do cliente</p>
+                </div>
+              </div>
+              <div class="chart-container-radar">
+                <canvas id="chart-radar-pillars"></canvas>
               </div>
             </div>
 
