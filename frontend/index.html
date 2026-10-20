@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BVX 360 | Inteligência, Prevenção e Ação</title>
+  <meta name="description" content="Plataforma de inteligência preditiva para antecipação de churn, monitoramento de telemetria e Customer Health Score para a BVX Tecnologia.">
+  
+  <!-- Fontes Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header Superior -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="brand-logo">
+          <div class="hex-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="brand-title">BVX <span>360</span></h1>
+            <p class="brand-subtitle">Inteligência, Prevenção e Ação</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-badges">
+        <div class="status-chip live-telemetry">
+          <span class="pulse-dot"></span>
+          <span>Telemetria em Tempo Real</span>
+        </div>
+        <div class="status-chip ai-chip">
+          <span class="ai-sparkle">✨</span>
+          <span>Copiloto FreeLLMAPI Ativo</span>
+        </div>
+        <div class="status-chip ods-chip" title="Alinhado aos Objetivos de Desenvolvimento Sustentável da ONU">
+          <span class="ods-badge">ODS 8 & 9</span>
+          <span>Crescimento & Inovação</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Container Principal -->
+  <main class="main-content">
+    
+    <!-- Seção de KPIs do Dashboard Geral -->
+    <section class="kpi-grid" id="kpi-section">
+      <div class="kpi-card" id="kpi-health">
+        <div class="kpi-header">
+          <span class="kpi-label">Índice Médio de Saúde (CHS)</span>
+          <span class="kpi-icon">🎯</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-number" id="avg-health-score">--</span>
+          <span class="kpi-total">/100</span>
+        </div>
+        <div class="kpi-progress-bar">
+          <div class="progress-fill" id="avg-health-fill" style="width: 0%"></div>
+        </div>
+        <span class="kpi-hint">Média ponderada da carteira</span>
+      </div>
+
+      <div class="kpi-card danger-card" id="kpi-high-risk">
+        <div class="kpi-header">
+          <span class="kpi-label">Clientes em Alto Risco</span>
+          <span class="kpi-icon">🚨</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-number text-danger" id="count-high-risk">--</span>
+          <span class="kpi-badge badge-danger">Prioridade Suporte</span>
+        </div>
+        <span class="kpi-hint" id="pct-high-risk">--% da base ativa</span>
+      </div>
+
+      <div class="kpi-card warning-card" id="kpi-attention">
+        <div class="kpi-header">
+          <span class="kpi-label">Em Atenção</span>
+          <span class="kpi-icon">⚠️</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-number text-warning" id="count-attention">--</span>
+          <span class="kpi-badge badge-warning">Acompanhar</span>
+        </div>
+        <span class="kpi-hint" id="pct-attention">Sinais moderados de oscilação</span>
+      </div>
+
+      <div class="kpi-card success-card" id="kpi-healthy">
+        <div class="kpi-header">
+          <span class="kpi-label">Base Saudável</span>
+          <span class="kpi-icon">🛡️</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-number text-success" id="count-healthy">--</span>
+          <span class="kpi-badge badge-success">Operação Segura</span>
+        </div>
+        <span class="kpi-hint" id="pct-healthy">Versão e backups em dia</span>
+      </div>
+
+      <div class="kpi-card revenue-card" id="kpi-revenue">
+        <div class="kpi-header">
+          <span class="kpi-label">Faturamento Diário Monitorado</span>
+          <span class="kpi-icon">💰</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-number text-cyan" id="total-revenue">R$ --</span>
+        </div>
+        <span class="kpi-hint">Transacionado nos PDVs dos clientes</span>
+      </div>
+    </section>
+
+    <!-- Barra de Alertas Rápidos Automáticos -->
+    <section class="alerts-banner" id="alerts-banner">
+      <div class="alerts-header">
+        <div class="alerts-title">
+          <span class="pulse-bell">🔔</span>
+          <strong>Alertas Automáticos de Atenção Imediata</strong>
+        </div>
+        <span class="alerts-count" id="alerts-count-badge">Carregando...</span>
+      </div>
+      <div class="alerts-carousel" id="alerts-container">
+        <!-- Itens inseridos via JavaScript -->
+      </div>
+    </section>
+
+    <!-- Painel de Trabalho Dividido em Duas Colunas -->
+    <div class="workspace-grid">
+      
+      <!-- COLUNA ESQUERDA: Fila Inteligente de Priorização -->
+      <section class="clients-column">
+        <div class="column-card">
+          <div class="column-header">
+            <div>
+              <h2 class="section-title">Fila Inteligente de Priorização</h2>
+              <p class="section-desc">Clientes ordenados pela criticidade do risco</p>
+            </div>
+            <span class="clients-badge" id="filtered-clients-count">0 clientes</span>
+          </div>
+
+          <!-- Filtros e Busca -->
+          <div class="search-filter-box">
+            <div class="search-input-wrapper">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="search-input" placeholder="Buscar por cliente, PDV, cidade ou responsável...">
+            </div>
+
+            <div class="filter-chips-row">
+              <button class="filter-chip active" data-filter="all">Todos</button>
+              <button class="filter-chip chip-danger" data-filter="ALTO RISCO">🔴 Alto Risco</button>
+              <button class="filter-chip chip-warning" data-filter="ATENÇÃO">🟡 Atenção</button>
+              <button class="filter-chip chip-success" data-filter="BAIXO RISCO">🟢 Saudável</button>
+              <button class="filter-chip chip-outline" id="filter-backup-btn">💾 Backup Crítico</button>
+              <button class="filter-chip chip-outline" id="filter-version-btn">📦 Versão Antiga</button>
+            </div>
+          </div>
+
+          <!-- Lista de Clientes -->
+          <div class="clients-list-container" id="clients-list">
+            <!-- Renderizado dinamicamente -->
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUNA DIREITA: Detalhamento 360, Simulador e Copiloto de IA -->
+      <section class="detail-column">
+        <div class="column-card detail-card" id="detail-card-view">
+          
+          <div class="empty-state" id="empty-detail-state">
+            <div class="empty-icon">👈</div>
+            <h3>Selecione um cliente na Fila</h3>
+            <p>Clique em qualquer estabelecimento da lista ao lado para inspecionar os 4 pilares de telemetria, simular melhorias e acionar o Copiloto de IA.</p>
+          </div>
+
+          <!-- Conteúdo do Detalhamento do Cliente -->
+          <div class="client-detail-content" id="client-detail-content" style="display: none;">
+            
+            <!-- Topo do Perfil do Cliente -->
+            <div class="detail-profile-header">
+              <div class="detail-info">
+                <div class="detail-tag-row">
+                  <span class="pdv-code" id="detail-pdv-code">PDV-0000</span>
+                  <span class="city-tag" id="detail-city-tag">Ourinhos - SP</span>
+                  <span class="cluster-tag" id="detail-cluster-tag">Cluster A</span>
+                </div>
+                <h2 class="detail-name" id="detail-name">Nome do Comércio</h2>
+                <p class="detail-subinfo">
+                  Responsável: <strong id="detail-responsible">Carlos</strong> • 
+                  Tel: <span id="detail-phone">(14) 99999-9999</span> • 
+                  Terminais: <span id="detail-terminals">2</span>
+                </p>
+              </div>
+
+              <!-- Gauge do Health Score -->
+              <div class="score-gauge-box">
+                <div class="gauge-circle" id="gauge-circle">
+                  <span class="gauge-value" id="detail-score-value">31</span>
+                  <span class="gauge-max">/100</span>
+                </div>
+                <span class="risk-badge" id="detail-risk-badge">ALTO RISCO</span>
+              </div>
+            </div>
+
+            <!-- 4 Pilares da Telemetria (Conforme Slide BVX) -->
+            <div class="pillars-grid">
+              
+              <!-- Pilar 1: Versionamento -->
+              <div class="pillar-card" id="pillar-version">
+                <div class="pillar-icon-box icon-version">📦</div>
+                <div class="pillar-content">
+                  <span class="pillar-label">01. VERSIONAMENTO</span>
+                  <div class="pillar-main-val" id="pillar-version-val">5.1.0</div>
+                  <span class="pillar-status" id="pillar-version-status">Desatualizada (Homologada: 5.4.2)</span>
+                </div>
+              </div>
+
+              <!-- Pilar 2: Backups -->
+              <div class="pillar-card" id="pillar-backup">
+                <div class="pillar-icon-box icon-backup">💾</div>
+                <div class="pillar-content">
+                  <span class="pillar-label">02. ROTINA DE BACKUP</span>
+                  <div class="pillar-main-val" id="pillar-backup-val">Há 7 dias</div>
+                  <span class="pillar-status" id="pillar-backup-status">Risco Crítico de Perda</span>
+                </div>
+              </div>
+
+              <!-- Pilar 3: Utilização / Vendas -->
+              <div class="pillar-card" id="pillar-sales">
+                <div class="pillar-icon-box icon-sales">📉</div>
+                <div class="pillar-content">
+                  <span class="pillar-label">03. VARIAÇÃO DE VENDAS</span>
+                  <div class="pillar-main-val" id="pillar-sales-val">-40%</div>
+                  <span class="pillar-status" id="pillar-sales-status">Sinal de Abandono (Churn)</span>
+                </div>
+              </div>
+
+              <!-- Pilar 4: Relacionamento / Chamados -->
+              <div class="pillar-card" id="pillar-tickets">
+                <div class="pillar-icon-box icon-tickets">🎧</div>
+                <div class="pillar-content">
+                  <span class="pillar-label">04. SUPORTE & CHAMADOS</span>
+                  <div class="pillar-main-val" id="pillar-tickets-val">6 chamados</div>
+                  <span class="pillar-status" id="pillar-tickets-status">Aumento Significativo (30d)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SIMULADOR DE IMPACTO ("E se...?") -->
+            <div class="simulator-box">
+              <div class="simulator-header">
+                <div class="sim-title-group">
+                  <span class="sim-icon">⚡</span>
+                  <div>
+                    <h3 class="sim-title">Simulador de Impacto ("E se...?")</h3>
+                    <p class="sim-desc">Simule o efeito imediato das ações da BVX no Health Score do cliente</p>
+                  </div>
+                </div>
+                <div class="sim-diff-badge" id="sim-diff-badge">+0 pts</div>
+              </div>
+
+              <div class="simulator-controls">
+                <label class="sim-toggle-item">
+                  <input type="checkbox" id="sim-check-version">
+                  <span class="custom-check"></span>
+                  <div class="toggle-text">
+                    <strong>Atualizar versão para 5.4.2</strong>
+                    <span>Resolve bugs conhecidos e melhora estabilidade</span>
+                  </div>
+                  <span class="pts-tag">+20 pts</span>
+                </label>
+
+                <label class="sim-toggle-item">
+                  <input type="checkbox" id="sim-check-backup">
+                  <span class="custom-check"></span>
+                  <div class="toggle-text">
+                    <strong>Realizar Backup Remoto Hoje</strong>
+                    <span>Elimina risco de perda de dados fiscais e estoque</span>
+                  </div>
+                  <span class="pts-tag">+30 pts</span>
+                </label>
+
+                <label class="sim-toggle-item">
+                  <input type="checkbox" id="sim-check-tickets">
+                  <span class="custom-check"></span>
+                  <div class="toggle-text">
+                    <strong>Resolver Chamados Pendentes</strong>
+                    <span>Restaura satisfação e engajamento do cliente</span>
+                  </div>
+                  <span class="pts-tag">+15 pts</span>
+                </label>
+              </div>
+
+              <!-- Resultado da Simulação -->
+              <div class="sim-result-card" id="sim-result-card">
+                <div class="sim-result-scores">
+                  <div class="res-col">
+                    <span class="res-label">Score Atual</span>
+                    <span class="res-val" id="sim-current-score">31</span>
+                  </div>
+                  <div class="res-arrow">➔</div>
+                  <div class="res-col">
+                    <span class="res-label">Score Projetado</span>
+                    <span class="res-val simulated" id="sim-projected-score">31</span>
+                  </div>
+                </div>
+                <div class="sim-feedback" id="sim-feedback-text">
+                  Selecione as melhorias acima para projetar a recuperação do cliente.
+                </div>
+              </div>
+            </div>
+
+            <!-- COPILOTO DE IA DA BVX (Ações em 1 Clique) -->
+            <div class="ai-actions-box">
+              <div class="ai-header">
+                <div class="ai-title-wrap">
+                  <span class="ai-sparkle-large">🤖</span>
+                  <div>
+                    <h3 class="ai-box-title">Copiloto Inteligente BVX (FreeLLMAPI)</h3>
+                    <p class="ai-box-desc">Prescrição de ações e comunicação personalizada instantânea</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ai-buttons-row">
+                <button class="btn-ai btn-diagnose" id="btn-ai-diagnose">
+                  <span class="btn-icon">🔍</span>
+                  <span>Diagnosticar com IA</span>
+                </button>
+                <button class="btn-ai btn-whatsapp" id="btn-ai-whatsapp">
+                  <span class="btn-icon">💬</span>
+                  <span>Gerar Script WhatsApp</span>
+                </button>
+                <button class="btn-ai btn-email" id="btn-ai-email">
+                  <span class="btn-icon">✉️</span>
+                  <span>Gerar E-mail Preventivo</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL DO COPILOTO IA -->
+  <div class="modal-backdrop" id="ai-modal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon" id="modal-type-icon">✨</span>
+          <div>
+            <h3 class="modal-title" id="modal-title">Copiloto BVX 360</h3>
+            <p class="modal-subtitle" id="modal-subtitle">Processado via FreeLLMAPI</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-loading" id="modal-loading" style="display: none;">
+          <div class="spinner"></div>
+          <p>Consultando modelo de IA e analisando telemetria do cliente...</p>
+        </div>
+        <div class="modal-text-content" id="modal-text-content">
+          <!-- Conteúdo gerado -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modal-copy-btn">
+          <span class="btn-icon">📋</span> Copiar Texto
+        </button>
+        <a href="#" target="_blank" class="btn-whatsapp-direct" id="modal-whatsapp-link" style="display: none;">
+          <span class="btn-icon">📲</span> Abrir no WhatsApp Web
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rodapé Institucional -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>Desenvolvido para o <strong>Hackathon Fatecou 2026</strong> em parceria com a <strong>BVX Tecnologia</strong>.</p>
+      <p class="ods-footer-note">Compromisso com <strong>ODS 8</strong> (Trabalho Decente e Crescimento Econômico) e <strong>ODS 9</strong> (Indústria, Inovação e Infraestrutura).</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
