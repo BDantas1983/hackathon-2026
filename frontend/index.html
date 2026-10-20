@@ -253,8 +253,8 @@
                   <span class="gauge-max">/100</span>
                 </div>
                 <span class="risk-badge" id="detail-risk-badge">ALTO RISCO</span>
-                <button class="btn-export-pdf" id="btn-export-pdf" title="Exportar Ficha 360 em PDF/Impressão">
-                  📄 Exportar Ficha 360
+                <button class="btn-os-tecnica" id="btn-gerar-os" title="Gerar Ordem de Serviço Preventiva Oficial para Atendimento Técnico">
+                  🛠️ Gerar O.S. Preventiva
                 </button>
               </div>
             </div>
@@ -547,6 +547,158 @@
           <span class="btn-icon">🖨️</span> Imprimir / Salvar PDF
         </button>
         <button class="btn-secondary" id="modal-extremos-close-bottom-btn">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ORDEM DE SERVIÇO PREVENTIVA (O.S. TÉCNICA BVX) -->
+  <div class="modal-backdrop modal-os-backdrop" id="modal-os-preventiva" style="display: none;">
+    <div class="modal-card modal-os-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🛠️</span>
+          <div>
+            <h3 class="modal-title">Ordem de Serviço Preventiva Oficial</h3>
+            <p class="modal-subtitle">Documento técnico padronizado para suporte remoto e visita técnica de campo</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="modal-os-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body modal-os-body">
+        <!-- Folha A4 Simulação Oficial da BVX -->
+        <div class="os-sheet-a4" id="os-print-content">
+          
+          <!-- Cabeçalho Timbrado Oficial -->
+          <div class="os-header">
+            <div class="os-header-brand">
+              <img src="assets/logo_bvx.webp" alt="BVX Tecnologia" class="os-logo">
+              <div>
+                <h2 class="os-company-name">BVX TECNOLOGIA LTDA</h2>
+                <p class="os-company-sub">Sistemas de Gestão Comercial • Suporte & Operações de Campo</p>
+                <p class="os-company-meta">Ourinhos / Santa Cruz do Rio Pardo - SP • Suporte: (14) 3302-0000</p>
+              </div>
+            </div>
+            <div class="os-header-meta">
+              <div class="os-number-badge" id="os-number">O.S. PREV-2026-0000</div>
+              <div class="os-date-row">Data de Emissão: <strong id="os-emission-date">20/10/2026</strong></div>
+              <div class="os-priority-badge" id="os-priority-badge">ALTA PRIORIDADE</div>
+            </div>
+          </div>
+
+          <div class="os-divider"></div>
+
+          <!-- Seção 1: Dados do Estabelecimento -->
+          <div class="os-section">
+            <h4 class="os-section-title">1. IDENTIFICAÇÃO DO CLIENTE & PDV</h4>
+            <div class="os-grid-2col">
+              <div><strong>Nome Fantasia:</strong> <span id="os-client-name">--</span></div>
+              <div><strong>Código PDV:</strong> <span id="os-client-pdv">--</span></div>
+              <div><strong>Responsável no Local:</strong> <span id="os-client-resp">--</span></div>
+              <div><strong>Telefone / WhatsApp:</strong> <span id="os-client-phone">--</span></div>
+              <div><strong>Cidade / UF:</strong> <span id="os-client-city">--</span></div>
+              <div><strong>Terminais Instalados:</strong> <span id="os-client-terminals">--</span></div>
+            </div>
+          </div>
+
+          <!-- Seção 2: Diagnóstico da Telemetria e Motivo da Intervenção -->
+          <div class="os-section">
+            <h4 class="os-section-title">2. MOTIVO DA ABERTURA PREVENTIVA (DIAGNÓSTICO DA TELEMETRIA)</h4>
+            <div class="os-telemetry-box">
+              <div class="os-kpi-pill">
+                <span>Health Score:</span> <strong id="os-kpi-score">--/100</strong>
+              </div>
+              <div class="os-kpi-pill">
+                <span>Versão Atual:</span> <strong id="os-kpi-version">--</strong> (Homologada: 5.4.2)
+              </div>
+              <div class="os-kpi-pill">
+                <span>Último Backup:</span> <strong id="os-kpi-backup">-- dias</strong>
+              </div>
+              <div class="os-kpi-pill">
+                <span>Oscilação Vendas:</span> <strong id="os-kpi-sales">--%</strong>
+              </div>
+              <div class="os-kpi-pill">
+                <span>Chamados (30d):</span> <strong id="os-kpi-tickets">--</strong>
+              </div>
+            </div>
+            <div class="os-alert-text-box" id="os-alert-text">
+              <!-- Preenchido via JavaScript -->
+            </div>
+          </div>
+
+          <!-- Seção 3: Checklist Obrigatório de Execução Técnica -->
+          <div class="os-section">
+            <h4 class="os-section-title">3. CHECKLIST OBRIGATÓRIO DE PROCEDIMENTOS TÉCNICOS</h4>
+            <table class="os-checklist-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">Status</th>
+                  <th>Procedimento Técnico</th>
+                  <th style="width: 140px;">Responsável</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-check"><span class="os-box-check"></span></td>
+                  <td><strong>Auditoria de Integridade do Banco de Dados:</strong> Verificar consistência de tabelas fiscais e índices locais.</td>
+                  <td>Técnico BVX</td>
+                </tr>
+                <tr>
+                  <td class="td-check"><span class="os-box-check"></span></td>
+                  <td><strong>Execução de Backup Imediato em Nuvem:</strong> Forçar sincronização com o repositório Cloud e validar hash SHA-256.</td>
+                  <td>Técnico BVX</td>
+                </tr>
+                <tr>
+                  <td class="td-check"><span class="os-box-check"></span></td>
+                  <td><strong>Atualização para Versão Homologada 5.4.2:</strong> Aplicar patch de correções nos terminais de caixa e retaguarda.</td>
+                  <td>Técnico BVX</td>
+                </tr>
+                <tr>
+                  <td class="td-check"><span class="os-box-check"></span></td>
+                  <td><strong>Teste de Emissão Fiscal (NFC-e / SAT / NF-e):</strong> Realizar emissão teste em homologação e conferir SEFAZ.</td>
+                  <td>Técnico BVX</td>
+                </tr>
+                <tr>
+                  <td class="td-check"><span class="os-box-check"></span></td>
+                  <td><strong>Entrevista de Alinhamento com o Comerciante:</strong> Coletar feedback de operação e validar satisfação de uso.</td>
+                  <td>Suporte / Técnico</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Seção 4: Validação & Assinaturas -->
+          <div class="os-section os-signatures-section">
+            <h4 class="os-section-title">4. PARECER TÉCNICO FINAL & VALIDAÇÃO DO ATENDIMENTO</h4>
+            <div class="os-notes-lines">
+              <div class="os-note-line">Observações Técnicas: ________________________________________________________________________________</div>
+              <div class="os-note-line">________________________________________________________________________________________________________</div>
+            </div>
+            
+            <div class="os-signatures-row">
+              <div class="os-sign-box">
+                <div class="os-sign-line"></div>
+                <div class="os-sign-label">Técnico Responsável (BVX Tecnologia)</div>
+                <div class="os-sign-sub">Matrícula / Equipe de Sucesso</div>
+              </div>
+              <div class="os-sign-box">
+                <div class="os-sign-line"></div>
+                <div class="os-sign-label" id="os-sign-client-name">Responsável pelo Estabelecimento</div>
+                <div class="os-sign-sub">Declaro a conclusão dos testes operacionais</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary-action" id="modal-os-print-btn">
+          <span class="btn-icon">🖨️</span> Imprimir O.S. Oficial (PDF)
+        </button>
+        <button class="btn-secondary" id="modal-os-close-bottom-btn">
           Fechar
         </button>
       </div>

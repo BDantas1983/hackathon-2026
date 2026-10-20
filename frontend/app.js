@@ -482,14 +482,35 @@ function configurarEventos() {
     });
   }
 
-  // Exportar Ficha 360 em PDF / Impressão
-  const btnExportPdf = document.getElementById('btn-export-pdf');
-  if (btnExportPdf) {
-    btnExportPdf.addEventListener('click', () => {
-      if (!selectedClient) {
-        alert('Selecione um cliente para exportar o relatório 360.');
-        return;
-      }
+  // Botão Gerar Ordem de Serviço Preventiva (O.S. Oficial BVX)
+  const btnGerarOS = document.getElementById('btn-gerar-os');
+  if (btnGerarOS) {
+    btnGerarOS.addEventListener('click', () => {
+      abrirModalOS(selectedClient);
+    });
+  }
+
+  // Modais de O.S. Preventiva
+  const btnCloseOS = document.getElementById('modal-os-close-btn');
+  if (btnCloseOS) {
+    btnCloseOS.addEventListener('click', fecharModalOS);
+  }
+
+  const btnCloseOSBottom = document.getElementById('modal-os-close-bottom-btn');
+  if (btnCloseOSBottom) {
+    btnCloseOSBottom.addEventListener('click', fecharModalOS);
+  }
+
+  const modalOS = document.getElementById('modal-os-preventiva');
+  if (modalOS) {
+    modalOS.addEventListener('click', (e) => {
+      if (e.target.id === 'modal-os-preventiva') fecharModalOS();
+    });
+  }
+
+  const btnPrintOS = document.getElementById('modal-os-print-btn');
+  if (btnPrintOS) {
+    btnPrintOS.addEventListener('click', () => {
       window.print();
     });
   }
@@ -964,3 +985,72 @@ function renderizarGraficosExtremos() {
     });
   }
 }
+
+// ==================== ORDEM DE SERVIÇO PREVENTIVA (O.S. TÉCNICA) ====================
+
+function abrirModalOS(cliente) {
+  const c = cliente || selectedClient;
+  if (!c) {
+    alert('Por favor, selecione um estabelecimento na lista para gerar a Ordem de Serviço Preventiva.');
+    return;
+  }
+
+  const modal = document.getElementById('modal-os-preventiva');
+  if (!modal) return;
+
+  // 1. Dados de Cabeçalho da O.S.
+  const now = new Date();
+  const dataFormatada = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('os-number').innerText = `O.S. PREV-2026-${String(c.id).padStart(4, '0')}`;
+  document.getElementById('os-emission-date').innerText = dataFormatada;
+
+  const priorityBadge = document.getElementById('os-priority-badge');
+  if (c.health_score < 50) {
+    priorityBadge.innerText = '🚨 ALTA CRITICIDADE (ATENDIMENTO 24H)';
+    priorityBadge.style.background = '#dc2626';
+  } else if (c.health_score < 75) {
+    priorityBadge.innerText = '⚠️ MODERADA (ATENDIMENTO 72H)';
+    priorityBadge.style.background = '#d97706';
+  } else {
+    priorityBadge.innerText = '🟢 PREVENTIVA REGULAR';
+    priorityBadge.style.background = '#16a34a';
+  }
+
+  // 2. Dados do Estabelecimento
+  document.getElementById('os-client-name').innerText = c.nome_fantasia;
+  document.getElementById('os-client-pdv').innerText = c.codigo_pdv;
+  document.getElementById('os-client-resp').innerText = c.responsavel;
+  document.getElementById('os-client-phone').innerText = c.telefone;
+  document.getElementById('os-client-city').innerText = `${c.cidade} - ${c.uf}`;
+  document.getElementById('os-client-terminals').innerText = `${c.quantidade_terminais} terminal(is) de PDV`;
+
+  // 3. Telemetria
+  document.getElementById('os-kpi-score').innerText = `${c.health_score}/100`;
+  document.getElementById('os-kpi-version').innerText = `v${c.versao_sistema}`;
+  document.getElementById('os-kpi-backup').innerText = `${c.dias_sem_backup} dias (${c.backup_integro ? 'Íntegro' : 'CORROMPIDO'})`;
+  document.getElementById('os-kpi-sales').innerText = `${c.variacao_vendas_pct}%`;
+  document.getElementById('os-kpi-tickets').innerText = `${c.chamados_ultimos_30d} chamados`;
+
+  // 4. Motivos e Parecer de IA
+  let alertasTexto = '';
+  if (c.alerta_anomalia) {
+    alertasTexto += `<strong>⚠️ Anomalia Detectada por IA (Isolation Forest):</strong> ${c.tipo_anomalia || 'Padrão multivariado crítico de risco de abandono'}.<br>`;
+  }
+  if (c.motivos_alerta && c.motivos_alerta.length > 0) {
+    alertasTexto += `<strong>Sinais Técnicos:</strong> ${c.motivos_alerta.join('; ')}.`;
+  } else {
+    alertasTexto += `Rotina preventiva padrão para manutenção e otimização de estabilidade.`;
+  }
+  document.getElementById('os-alert-text').innerHTML = alertasTexto;
+
+  // 5. Assinatura do Cliente
+  document.getElementById('os-sign-client-name').innerText = c.responsavel || 'Responsável pelo Estabelecimento';
+
+  modal.style.display = 'flex';
+}
+
+function fecharModalOS() {
+  const modal = document.getElementById('modal-os-preventiva');
+  if (modal) modal.style.display = 'none';
+}
+
