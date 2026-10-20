@@ -62,6 +62,9 @@ let selectedClient = null;
 // Instâncias Chart.js (controle de lifecycle)
 let chartRiskDoughnut = null;
 let chartRadarPillars = null;
+let chartTopMelhores = null;
+let chartTopPiores = null;
+let chartTopValencia = null;
 
 // ==================== INICIALIZAÇÃO ====================
 document.addEventListener('DOMContentLoaded', () => {
@@ -491,6 +494,58 @@ function configurarEventos() {
     });
   }
 
+  // Modal de Análise Estratégica de Extremos (Colab / Top 10)
+  const btnExtremos = document.getElementById('btn-open-extremos-modal');
+  if (btnExtremos) {
+    btnExtremos.addEventListener('click', abrirModalExtremos);
+  }
+
+  const btnCloseExtremos = document.getElementById('modal-extremos-close-btn');
+  if (btnCloseExtremos) {
+    btnCloseExtremos.addEventListener('click', fecharModalExtremos);
+  }
+
+  const btnCloseExtremosBottom = document.getElementById('modal-extremos-close-bottom-btn');
+  if (btnCloseExtremosBottom) {
+    btnCloseExtremosBottom.addEventListener('click', fecharModalExtremos);
+  }
+
+  const modalExtremos = document.getElementById('modal-extremos');
+  if (modalExtremos) {
+    modalExtremos.addEventListener('click', (e) => {
+      if (e.target.id === 'modal-extremos') fecharModalExtremos();
+    });
+  }
+
+  const btnPrintExtremos = document.getElementById('modal-extremos-print-btn');
+  if (btnPrintExtremos) {
+    btnPrintExtremos.addEventListener('click', () => {
+      window.print();
+    });
+  }
+
+  // Abas do Modal de Extremos
+  const tabInterativo = document.getElementById('tab-btn-interativo');
+  const tabOriginal = document.getElementById('tab-btn-original');
+  const viewInterativo = document.getElementById('view-extremos-interativo');
+  const viewOriginal = document.getElementById('view-extremos-original');
+
+  if (tabInterativo && tabOriginal) {
+    tabInterativo.addEventListener('click', () => {
+      tabInterativo.classList.add('active');
+      tabOriginal.classList.remove('active');
+      viewInterativo.style.display = 'block';
+      viewOriginal.style.display = 'none';
+    });
+
+    tabOriginal.addEventListener('click', () => {
+      tabOriginal.classList.add('active');
+      tabInterativo.classList.remove('active');
+      viewInterativo.style.display = 'none';
+      viewOriginal.style.display = 'block';
+    });
+  }
+
   // Busca textual
   document.getElementById('search-input').addEventListener('input', () => {
     renderizarListaClientes();
@@ -719,4 +774,193 @@ function renderizarGraficoRadar(subscores) {
       }
     }
   });
+}
+
+// ==================== MODAL DE EXTREMOS & RISCO DE VALÊNCIA ====================
+
+function abrirModalExtremos() {
+  const modal = document.getElementById('modal-extremos');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  renderizarGraficosExtremos();
+}
+
+function fecharModalExtremos() {
+  const modal = document.getElementById('modal-extremos');
+  if (modal) modal.style.display = 'none';
+}
+
+function renderizarGraficosExtremos() {
+  if (!allClients || allClients.length === 0) return;
+
+  // 1. Top 10 Melhores Clientes (Maior Saúde)
+  const top10Melhores = [...allClients]
+    .sort((a, b) => b.health_score - a.health_score)
+    .slice(0, 10);
+
+  // 2. Top 10 Piores Clientes (Críticos / Risco Churn)
+  const top10Piores = [...allClients]
+    .sort((a, b) => a.health_score - b.health_score)
+    .slice(0, 10);
+
+  // 3. Risco de Valência Técnica (Sem Backup + Sistema Antigo)
+  let top10Valencia = [...allClients]
+    .filter(c => c.dias_sem_backup >= 2 || !c.versao_sistema.startsWith('5.4'))
+    .sort((a, b) => b.dias_sem_backup - a.dias_sem_backup)
+    .slice(0, 10);
+
+  if (top10Valencia.length === 0) {
+    top10Valencia = [...allClients].sort((a, b) => b.dias_sem_backup - a.dias_sem_backup).slice(0, 10);
+  }
+
+  // --- Gráfico 1: Melhores (Horizontal) ---
+  const ctxMelhores = document.getElementById('chart-top-melhores');
+  if (ctxMelhores) {
+    if (chartTopMelhores) chartTopMelhores.destroy();
+    chartTopMelhores = new Chart(ctxMelhores, {
+      type: 'bar',
+      data: {
+        labels: top10Melhores.map(c => c.nome_fantasia),
+        datasets: [{
+          label: 'Health Score',
+          data: top10Melhores.map(c => c.health_score),
+          backgroundColor: [
+            '#2e1065', '#3b0764', '#1e1b4b', '#1e3a8a', '#0369a1',
+            '#0e7490', '#047857', '#059669', '#65a30d', '#84cc16'
+          ],
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` Health Score: ${ctx.parsed.x}/100`
+            }
+          }
+        },
+        scales: {
+          x: {
+            min: 0,
+            max: 100,
+            grid: { color: 'rgba(226, 232, 240, 0.6)' },
+            ticks: { font: { family: "'Open Sans', sans-serif", size: 10 } }
+          },
+          y: {
+            grid: { display: false },
+            ticks: {
+              font: { family: "'Montserrat', sans-serif", size: 10, weight: '600' },
+              color: '#1e293b'
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // --- Gráfico 2: Piores (Horizontal) ---
+  const ctxPiores = document.getElementById('chart-top-piores');
+  if (ctxPiores) {
+    if (chartTopPiores) chartTopPiores.destroy();
+    chartTopPiores = new Chart(ctxPiores, {
+      type: 'bar',
+      data: {
+        labels: top10Piores.map(c => c.nome_fantasia),
+        datasets: [{
+          label: 'Health Score',
+          data: top10Piores.map(c => c.health_score),
+          backgroundColor: [
+            '#7f1d1d', '#991b1b', '#b91c1c', '#dc2626', '#ea580c',
+            '#f97316', '#fb923c', '#fdba74', '#fed7aa', '#ffedd5'
+          ],
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` Health Score: ${ctx.parsed.x}/100`
+            }
+          }
+        },
+        scales: {
+          x: {
+            min: 0,
+            max: 100,
+            grid: { color: 'rgba(226, 232, 240, 0.6)' },
+            ticks: { font: { family: "'Open Sans', sans-serif", size: 10 } }
+          },
+          y: {
+            grid: { display: false },
+            ticks: {
+              font: { family: "'Montserrat', sans-serif", size: 10, weight: '600' },
+              color: '#1e293b'
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // --- Gráfico 3: Valência Técnica (Horizontal) ---
+  const ctxValencia = document.getElementById('chart-top-valencia');
+  if (ctxValencia) {
+    if (chartTopValencia) chartTopValencia.destroy();
+    const maxDias = Math.max(...top10Valencia.map(c => c.dias_sem_backup), 10);
+    chartTopValencia = new Chart(ctxValencia, {
+      type: 'bar',
+      data: {
+        labels: top10Valencia.map(c => `${c.nome_fantasia} (v${c.versao_sistema})`),
+        datasets: [{
+          label: 'Dias sem Backup',
+          data: top10Valencia.map(c => c.dias_sem_backup),
+          backgroundColor: [
+            '#e0a96d', '#d98b68', '#c96a66', '#b34d67', '#973669',
+            '#782468', '#581961', '#3b1251', '#260c3b', '#170624'
+          ],
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` Dias sem Backup: ${ctx.parsed.x} dias`
+            }
+          }
+        },
+        scales: {
+          x: {
+            min: 0,
+            max: Math.ceil(maxDias * 1.2),
+            grid: { color: 'rgba(226, 232, 240, 0.6)' },
+            ticks: { font: { family: "'Open Sans', sans-serif", size: 10 } }
+          },
+          y: {
+            grid: { display: false },
+            ticks: {
+              font: { family: "'Montserrat', sans-serif", size: 10, weight: '600' },
+              color: '#1e293b'
+            }
+          }
+        }
+      }
+    });
+  }
 }

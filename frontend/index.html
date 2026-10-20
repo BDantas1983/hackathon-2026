@@ -56,6 +56,10 @@
           <span class="ods-badge">ODS 8 & 9</span>
           <span>Crescimento & Inovação</span>
         </div>
+        <button class="status-chip report-trigger-chip" id="btn-open-extremos-modal" title="Abrir Análise Estratégica de Extremos e Risco de Valência">
+          <span>📊</span>
+          <span>Relatório de Extremos (Top 10)</span>
+        </button>
       </div>
     </div>
   </header>
@@ -452,6 +456,98 @@
         <a href="#" target="_blank" class="btn-whatsapp-direct" id="modal-whatsapp-link" style="display: none;">
           <span class="btn-icon">📲</span> Abrir no WhatsApp Web
         </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ANÁLISE ESTRATÉGICA DE EXTREMOS (COLAB / HACKATHON) -->
+  <div class="modal-backdrop modal-extremos-backdrop" id="modal-extremos" style="display: none;">
+    <div class="modal-card modal-extremos-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">📊</span>
+          <div>
+            <h3 class="modal-title">Análise Estratégica de Extremos e Risco de Valência</h3>
+            <p class="modal-subtitle">BVX Tecnologia • Inteligência de Carteira e Gestão de Churn</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="modal-extremos-close-btn">&times;</button>
+      </div>
+
+      <!-- Abas de Visualização -->
+      <div class="extremos-tabs-nav">
+        <button class="extremos-tab-btn active" id="tab-btn-interativo">
+          <span>📈</span> Gráficos Dinâmicos (Carteira Ativa)
+        </button>
+        <button class="extremos-tab-btn" id="tab-btn-original">
+          <span>🖼️</span> Visualização Original (Google Colab)
+        </button>
+      </div>
+
+      <div class="modal-body modal-extremos-body">
+        <!-- Visão 1: Gráficos Dinâmicos com Chart.js -->
+        <div class="extremos-view-content" id="view-extremos-interativo">
+          <div class="extremos-grid-charts">
+            <!-- Gráfico 1: Top 10 Melhores -->
+            <div class="extremo-chart-box box-melhores">
+              <div class="extremo-box-header">
+                <span class="extremo-icon">🏆</span>
+                <div>
+                  <h4 class="extremo-chart-title">Top 10 Melhores Clientes</h4>
+                  <p class="extremo-chart-subtitle">Maior Health Score (Operação Saudável)</p>
+                </div>
+              </div>
+              <div class="extremo-chart-container">
+                <canvas id="chart-top-melhores"></canvas>
+              </div>
+            </div>
+
+            <!-- Gráfico 2: Top 10 Piores -->
+            <div class="extremo-chart-box box-piores">
+              <div class="extremo-box-header">
+                <span class="extremo-icon">⚠️</span>
+                <div>
+                  <h4 class="extremo-chart-title">Top 10 Piores Clientes</h4>
+                  <p class="extremo-chart-subtitle">Críticos e Alto Risco de Churn</p>
+                </div>
+              </div>
+              <div class="extremo-chart-container">
+                <canvas id="chart-top-piores"></canvas>
+              </div>
+            </div>
+
+            <!-- Gráfico 3: Risco de Valência Técnica -->
+            <div class="extremo-chart-box box-valencia">
+              <div class="extremo-box-header">
+                <span class="extremo-icon">🚨</span>
+                <div>
+                  <h4 class="extremo-chart-title">Risco de Valência Técnica</h4>
+                  <p class="extremo-chart-subtitle">Sem Backup Regular + Versão Defasada</p>
+                </div>
+              </div>
+              <div class="extremo-chart-container">
+                <canvas id="chart-top-valencia"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visão 2: Imagem Original do Colab -->
+        <div class="extremos-view-content" id="view-extremos-original" style="display: none;">
+          <div class="original-colab-wrapper">
+            <img src="assets/analise_extremos_colab.png" alt="Análise Estratégica de Extremos e Risco de Valência - BVX Tecnologia" class="original-colab-img">
+            <p class="original-colab-caption">Gráfico original de extremos e risco de valência gerado no ambiente do Google Colab (Seaborn / Matplotlib).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modal-extremos-print-btn">
+          <span class="btn-icon">🖨️</span> Imprimir / Salvar PDF
+        </button>
+        <button class="btn-secondary" id="modal-extremos-close-bottom-btn">
+          Fechar
+        </button>
       </div>
     </div>
   </div>
