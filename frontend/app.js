@@ -578,6 +578,41 @@ function configurarEventos() {
     });
   }
 
+  // Modal Dossiê Executivo (Diretoria)
+  const btnDossie = document.getElementById('btn-open-dossier-modal');
+  if (btnDossie) {
+    btnDossie.addEventListener('click', abrirModalDossie);
+  }
+
+  const btnDossieFicha = document.getElementById('btn-gerar-dossie-ficha');
+  if (btnDossieFicha) {
+    btnDossieFicha.addEventListener('click', abrirModalDossie);
+  }
+
+  const btnCloseDossie = document.getElementById('modal-dossie-close-btn');
+  if (btnCloseDossie) {
+    btnCloseDossie.addEventListener('click', fecharModalDossie);
+  }
+
+  const btnCloseDossieBottom = document.getElementById('modal-dossie-close-bottom-btn');
+  if (btnCloseDossieBottom) {
+    btnCloseDossieBottom.addEventListener('click', fecharModalDossie);
+  }
+
+  const modalDossie = document.getElementById('modal-dossie-diretoria');
+  if (modalDossie) {
+    modalDossie.addEventListener('click', (e) => {
+      if (e.target.id === 'modal-dossie-diretoria') fecharModalDossie();
+    });
+  }
+
+  const btnPrintDossie = document.getElementById('modal-dossie-print-btn');
+  if (btnPrintDossie) {
+    btnPrintDossie.addEventListener('click', () => {
+      window.print();
+    });
+  }
+
   // Abas do Modal de Extremos
   const tabInterativo = document.getElementById('tab-btn-interativo');
   const tabOriginal = document.getElementById('tab-btn-original');
@@ -1185,5 +1220,82 @@ function fecharModalLaudo() {
   const modal = document.getElementById('modal-laudo-conformidade');
   if (modal) modal.style.display = 'none';
 }
+
+// ==================== DOSSIÊ EXECUTIVO DE RISCO (DIRETORIA) ====================
+
+function abrirModalDossie() {
+  if (!allClients || allClients.length === 0) {
+    alert('Os dados dos clientes ainda estão sendo carregados.');
+    return;
+  }
+
+  const modal = document.getElementById('modal-dossie-diretoria');
+  if (!modal) return;
+
+  const now = new Date();
+  document.getElementById('dossie-emission-date').innerText = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+  // Cálculos Macroeconômicos e de Risco
+  const totalReceita = allClients.reduce((acc, c) => acc + (c.faturamento_diario_estimado || 0), 0);
+  const clientesAltoRisco = allClients.filter(c => c.health_score < 50);
+  const receitaEmRisco = clientesAltoRisco.reduce((acc, c) => acc + (c.faturamento_diario_estimado || 0), 0);
+  const backupsCriticos = allClients.filter(c => c.dias_sem_backup >= 3 || !c.backup_integro).length;
+  const versoesDefasadas = allClients.filter(c => !c.versao_sistema.startsWith('5.4')).length;
+
+  const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
+
+  document.getElementById('dossie-total-revenue').innerText = formatBRL(totalReceita);
+  document.getElementById('dossie-risk-revenue').innerText = formatBRL(receitaEmRisco);
+  document.getElementById('dossie-risk-count').innerText = `${clientesAltoRisco.length} estabelecimentos em Alto Risco`;
+  document.getElementById('dossie-backups-count').innerText = backupsCriticos;
+  document.getElementById('dossie-versions-count').innerText = versoesDefasadas;
+  document.getElementById('dossie-plan-current-risk').innerText = clientesAltoRisco.length;
+
+  // Badge Geral da Carteira
+  const mediaScore = allClients.reduce((acc, c) => acc + c.health_score, 0) / allClients.length;
+  const badgeRisk = document.getElementById('dossie-badge-risk');
+  if (mediaScore < 50) {
+    badgeRisk.innerText = `🚨 ÍNDICE GERAL: ${mediaScore.toFixed(1)}/100 • ALERTA CRÍTICO`;
+    badgeRisk.style.background = '#dc2626';
+  } else if (mediaScore < 75) {
+    badgeRisk.innerText = `⚠️ ÍNDICE GERAL: ${mediaScore.toFixed(1)}/100 • ALERTA MODERADO`;
+    badgeRisk.style.background = '#d97706';
+  } else {
+    badgeRisk.innerText = `🟢 ÍNDICE GERAL: ${mediaScore.toFixed(1)}/100 • CARTEIRA SAUDÁVEL`;
+    badgeRisk.style.background = '#16a34a';
+  }
+
+  // Tabela Sintética dos Top 10 Clientes sob Risco Iminente
+  const top10Criticos = [...allClients].sort((a, b) => a.health_score - b.health_score).slice(0, 10);
+  const tbody = document.getElementById('dossie-table-body');
+  tbody.innerHTML = top10Criticos.map(c => `
+    <tr>
+      <td><strong>${c.codigo_pdv}</strong></td>
+      <td><strong>${c.nome_fantasia}</strong></td>
+      <td>${c.cidade}</td>
+      <td style="text-align: center;">
+        <span class="dossie-table-score ${c.health_score < 50 ? 'score-danger' : 'score-warning'}">${c.health_score}</span>
+      </td>
+      <td style="text-align: center; color: ${c.dias_sem_backup >= 3 ? '#dc2626' : '#1e293b'}; font-weight: 600;">
+        ${c.dias_sem_backup}d ${!c.backup_integro ? '⚠️' : ''}
+      </td>
+      <td style="text-align: center;">v${c.versao_sistema}</td>
+      <td>
+        <span class="dossie-table-alert">${c.alerta_anomalia ? '⚡ ' + (c.tipo_anomalia || 'Anomalia IA') : ((c.motivos_alerta && c.motivos_alerta[0]) || 'Atenção Operacional')}</span>
+      </td>
+      <td style="text-align: right; font-weight: 700; color: #0f172a;">
+        ${formatBRL(c.faturamento_diario_estimado)}
+      </td>
+    </tr>
+  `).join('');
+
+  modal.style.display = 'flex';
+}
+
+function fecharModalDossie() {
+  const modal = document.getElementById('modal-dossie-diretoria');
+  if (modal) modal.style.display = 'none';
+}
+
 
 

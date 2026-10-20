@@ -2649,7 +2649,386 @@ body {
   color: #94a3b8;
 }
 
-/* Regras de Impressão (O.S. ou Laudo) */
+/* ==================== MARCA INSTITUCIONAL NOS DOCUMENTOS A4 ==================== */
+.doc-brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 6px 14px 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.doc-brand-icon {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.doc-brand-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-brand-title {
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--bvx-primary);
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+}
+
+.doc-brand-title span {
+  color: var(--bvx-teal);
+  font-weight: 600;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.doc-brand-sub {
+  font-size: 8.5px;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==================== DOSSIÊ EXECUTIVO DA DIRETORIA ==================== */
+
+/* Botão no Header */
+.dossier-trigger-chip {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.35) !important;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  font-weight: 700 !important;
+}
+
+.dossier-trigger-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.5) !important;
+  border-color: var(--bvx-teal) !important;
+}
+
+/* Botão Dossiê na Ficha 360 */
+.btn-dossie-diretoria {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-dossie-diretoria:hover {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Modal do Dossiê */
+.modal-dossie-card {
+  max-width: 980px !important;
+  width: 96vw !important;
+  max-height: 94vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #f1f5f9 !important;
+}
+
+.modal-dossie-body {
+  overflow-y: auto !important;
+  max-height: calc(92vh - 130px) !important;
+  padding: 24px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/* Folha A4 do Dossiê */
+.dossie-sheet-a4 {
+  background: #ffffff;
+  width: 100%;
+  max-width: 880px;
+  min-height: 1020px;
+  padding: 36px 40px;
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cabeçalho do Dossiê */
+.dossie-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.dossie-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dossie-logo {
+  height: 52px;
+  width: auto;
+}
+
+.dossie-title {
+  font-family: var(--font-title);
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.dossie-sub {
+  font-size: 11px;
+  color: #475569;
+  font-weight: 600;
+  margin: 2px 0 0;
+}
+
+.dossie-header-meta {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.dossie-period {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.dossie-date {
+  font-size: 10.5px;
+  color: #64748b;
+}
+
+.dossie-badge-risk {
+  font-family: var(--font-title);
+  font-size: 10px;
+  font-weight: 800;
+  color: #ffffff;
+  background: #d97706;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+
+.dossie-divider {
+  height: 2px;
+  background: linear-gradient(to right, #0f172a, var(--bvx-primary), transparent);
+  margin: 16px 0;
+}
+
+/* Seções do Dossiê */
+.dossie-section {
+  margin-bottom: 18px;
+}
+
+.dossie-section-title {
+  font-family: var(--font-title);
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-bottom: 5px;
+  border-bottom: 1.5px solid #e2e8f0;
+  margin: 0 0 10px 0;
+}
+
+/* Grid de Métricas Macroeconômicas */
+.dossie-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.dossie-kpi-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.card-risk-money {
+  background: #fff5f5;
+  border-color: #fecaca;
+}
+
+.dossie-kpi-label {
+  font-family: var(--font-title);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #64748b;
+  display: block;
+}
+
+.dossie-kpi-val {
+  font-family: var(--font-title);
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 4px 0 2px 0;
+}
+
+.dossie-kpi-val.val-danger {
+  color: #dc2626;
+}
+
+.dossie-kpi-sub {
+  font-size: 9.5px;
+  color: #94a3b8;
+  display: block;
+}
+
+/* Tabela Sintética Top 10 */
+.dossie-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10.5px;
+  margin-top: 4px;
+}
+
+.dossie-table th {
+  background: #f1f5f9;
+  color: #475569;
+  text-align: left;
+  padding: 5px 8px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  border: 1px solid #cbd5e1;
+}
+
+.dossie-table td {
+  padding: 6px 8px;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  line-height: 1.3;
+}
+
+.dossie-table tr:nth-child(even) {
+  background: #fafaf9;
+}
+
+.dossie-table-score {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 10.5px;
+}
+
+.dossie-table-score.score-danger {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.dossie-table-score.score-warning {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.dossie-table-alert {
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* Plano Diretor de Ação */
+.dossie-action-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dossie-plan-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.plan-badge {
+  font-family: var(--font-title);
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: #ffffff;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-urgente {
+  background: #dc2626;
+}
+
+.badge-tatico {
+  background: #0284c7;
+}
+
+.badge-meta {
+  background: #059669;
+}
+
+.plan-body {
+  font-size: 11px;
+  color: #334155;
+  line-height: 1.35;
+}
+
+.plan-body strong {
+  color: #0f172a;
+}
+
+/* Rodapé de Validação da Diretoria */
+.dossie-footer-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.dossie-sign-col {
+  text-align: center;
+}
+
+.dossie-sign-line {
+  border-bottom: 1px solid #94a3b8;
+  width: 75%;
+  margin: 0 auto 6px auto;
+}
+
+.dossie-sign-role {
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.dossie-sign-corp {
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* Regras de Impressão (O.S., Laudo ou Dossiê) */
 @media print {
   body * {
     visibility: hidden;
@@ -2664,12 +3043,18 @@ body {
   .modal-laudo-card,
   .modal-laudo-body,
   .laudo-sheet-a4,
-  .laudo-sheet-a4 * {
+  .laudo-sheet-a4 *,
+  .modal-dossie-backdrop,
+  .modal-dossie-card,
+  .modal-dossie-body,
+  .dossie-sheet-a4,
+  .dossie-sheet-a4 * {
     visibility: visible !important;
   }
 
   .modal-os-backdrop,
-  .modal-laudo-backdrop {
+  .modal-laudo-backdrop,
+  .modal-dossie-backdrop {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
@@ -2687,7 +3072,8 @@ body {
   }
 
   .os-sheet-a4,
-  .laudo-sheet-a4 {
+  .laudo-sheet-a4,
+  .dossie-sheet-a4 {
     border: none !important;
     box-shadow: none !important;
     width: 100% !important;
@@ -2696,6 +3082,7 @@ body {
     margin: 0 !important;
   }
 }
+
 
 
 

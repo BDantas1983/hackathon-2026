@@ -61,6 +61,10 @@
           <span>📊</span>
           <span>Relatório de Extremos (Top 10)</span>
         </button>
+        <button class="status-chip dossier-trigger-chip" id="btn-open-dossier-modal" title="Abrir Dossiê Executivo Consolidado para a Diretoria">
+          <span>📑</span>
+          <span>Dossiê da Diretoria</span>
+        </button>
       </div>
     </div>
   </header>
@@ -259,6 +263,9 @@
                   </button>
                   <button class="btn-doc-action btn-laudo-cliente" id="btn-gerar-laudo" title="Gerar Laudo de Conformidade e Segurança Digital para o Cliente">
                     📋 Laudo do Cliente
+                  </button>
+                  <button class="btn-doc-action btn-dossie-diretoria" id="btn-gerar-dossie-ficha" title="Gerar Dossiê Executivo de Risco & Retenção da Carteira para a Diretoria">
+                    📑 Dossiê da Diretoria
                   </button>
                 </div>
               </div>
@@ -579,7 +586,13 @@
           <!-- Cabeçalho Timbrado Oficial -->
           <div class="os-header">
             <div class="os-header-brand">
-              <img src="assets/logo_bvx.webp" alt="BVX Tecnologia" class="os-logo">
+              <div class="doc-brand-badge">
+                <img src="assets/favicon.png" alt="BVX Tecnologia" class="doc-brand-icon">
+                <div class="doc-brand-texts">
+                  <span class="doc-brand-title">BVX <span>TECNOLOGIA</span></span>
+                  <span class="doc-brand-sub">Sistemas Comerciais • Suporte & Operações</span>
+                </div>
+              </div>
               <div>
                 <h2 class="os-company-name">BVX TECNOLOGIA LTDA</h2>
                 <p class="os-company-sub">Sistemas de Gestão Comercial • Suporte & Operações de Campo</p>
@@ -731,7 +744,13 @@
           <!-- Cabeçalho Institucional Oficial -->
           <div class="laudo-header">
             <div class="laudo-header-brand">
-              <img src="assets/logo_bvx.webp" alt="BVX Tecnologia" class="laudo-logo">
+              <div class="doc-brand-badge">
+                <img src="assets/favicon.png" alt="BVX Tecnologia" class="doc-brand-icon">
+                <div class="doc-brand-texts">
+                  <span class="doc-brand-title">BVX <span>TECNOLOGIA</span></span>
+                  <span class="doc-brand-sub">Segurança Digital & Auditoria Preventiva</span>
+                </div>
+              </div>
               <div>
                 <h2 class="laudo-title">LAUDO DE CONFORMIDADE & SEGURANÇA DIGITAL</h2>
                 <p class="laudo-sub">Programa de Prevenção e Continuidade Operacional • BVX Tecnologia</p>
@@ -844,6 +863,152 @@
           <span class="btn-icon">🖨️</span> Imprimir / Salvar Laudo em PDF
         </button>
         <button class="btn-secondary" id="modal-laudo-close-bottom-btn">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DOSSIÊ EXECUTIVO DE RISCO & CHURN (DIRETORIA BVX) -->
+  <div class="modal-backdrop modal-dossie-backdrop" id="modal-dossie-diretoria" style="display: none;">
+    <div class="modal-card modal-dossie-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">📑</span>
+          <div>
+            <h3 class="modal-title">Dossiê Executivo de Risco & Retenção de Carteira</h3>
+            <p class="modal-subtitle">Relatório executivo consolidado para Diretoria de Operações e Gestão de CS</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="modal-dossie-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body modal-dossie-body">
+        <!-- Folha A4 do Dossiê Executivo -->
+        <div class="dossie-sheet-a4" id="dossie-print-content">
+          
+          <!-- Cabeçalho Executivo Oficial -->
+          <div class="dossie-header">
+            <div class="dossie-header-brand">
+              <div class="doc-brand-badge">
+                <img src="assets/favicon.png" alt="BVX Tecnologia" class="doc-brand-icon">
+                <div class="doc-brand-texts">
+                  <span class="doc-brand-title">BVX <span>TECNOLOGIA</span></span>
+                  <span class="doc-brand-sub">Inteligência Preditiva & Proteção de Receita</span>
+                </div>
+              </div>
+              <div>
+                <h2 class="dossie-title">DOSSIÊ EXECUTIVO DE RISCO & RETENÇÃO</h2>
+                <p class="dossie-sub">BVX Tecnologia • Inteligência Preditiva e Proteção de Receita Recorrente</p>
+              </div>
+            </div>
+            <div class="dossie-header-meta">
+              <div class="dossie-period">Competência: <strong>Outubro/2026</strong></div>
+              <div class="dossie-date">Emissão: <span id="dossie-emission-date">20/10/2026</span></div>
+              <div class="dossie-badge-risk" id="dossie-badge-risk">CARTEIRA EM ALERTA MODERADO</div>
+            </div>
+          </div>
+
+          <div class="dossie-divider"></div>
+
+          <!-- Quadro 1: Métricas Macroeconômicas e Financeiras -->
+          <div class="dossie-section">
+            <h4 class="dossie-section-title">1. VISÃO FINANCEIRA & MACRO DA CARTEIRA</h4>
+            <div class="dossie-kpis-grid">
+              <div class="dossie-kpi-card">
+                <span class="dossie-kpi-label">Faturamento Diário Monitorado</span>
+                <div class="dossie-kpi-val" id="dossie-total-revenue">R$ 0,00</div>
+                <span class="dossie-kpi-sub">Total transacionado nos PDVs</span>
+              </div>
+              <div class="dossie-kpi-card card-risk-money">
+                <span class="dossie-kpi-label">Receita sob Risco Iminente</span>
+                <div class="dossie-kpi-val val-danger" id="dossie-risk-revenue">R$ 0,00</div>
+                <span class="dossie-kpi-sub" id="dossie-risk-count">0 clientes em Alto Risco</span>
+              </div>
+              <div class="dossie-kpi-card">
+                <span class="dossie-kpi-label">Backups Críticos (> 3 dias)</span>
+                <div class="dossie-kpi-val" id="dossie-backups-count">0</div>
+                <span class="dossie-kpi-sub">Vulnerabilidade de perda de dados</span>
+              </div>
+              <div class="dossie-kpi-card">
+                <span class="dossie-kpi-label">Versões Defasadas (< 5.4.2)</span>
+                <div class="dossie-kpi-val" id="dossie-versions-count">0</div>
+                <span class="dossie-kpi-sub">Risco fiscal e chamados recorrentes</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quadro 2: Tabela Sintética dos Top 10 Clientes sob Risco Iminente -->
+          <div class="dossie-section">
+            <div class="dossie-table-header-wrap">
+              <h4 class="dossie-section-title">2. TOP 10 CLIENTES DE MAIOR URGÊNCIA DE RETENÇÃO (INTERVENÇÃO 24H)</h4>
+            </div>
+            <table class="dossie-table">
+              <thead>
+                <tr>
+                  <th style="width: 80px;">PDV</th>
+                  <th>Estabelecimento</th>
+                  <th>Cidade</th>
+                  <th style="text-align: center;">Score</th>
+                  <th style="text-align: center;">Backup</th>
+                  <th style="text-align: center;">Versão</th>
+                  <th>Alerta IA (Isolation Forest)</th>
+                  <th style="text-align: right;">Receita/Dia</th>
+                </tr>
+              </thead>
+              <tbody id="dossie-table-body">
+                <!-- Preenchido via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Quadro 3: Plano Diretor de Ação para a Equipe de Suporte (15 Colaboradores) -->
+          <div class="dossie-section">
+            <h4 class="dossie-section-title">3. PLANO DIRETOR DE INTERVENÇÃO (DIRETRIZES DA GESTÃO)</h4>
+            <div class="dossie-action-plan">
+              <div class="dossie-plan-item">
+                <span class="plan-badge badge-urgente">24 Horas</span>
+                <div class="plan-body">
+                  <strong>Força-Tarefa nos Clientes Silenciosos:</strong> Contato ativo e empático com os comércios sem chamados mas com queda severa de faturamento.
+                </div>
+              </div>
+              <div class="dossie-plan-item">
+                <span class="plan-badge badge-tatico">72 Horas</span>
+                <div class="plan-body">
+                  <strong>Rotina Remota de Sincronização de Backup:</strong> Abertura de O.S. Preventivas para forçar a cópia dos estabelecimentos com mais de 3 dias sem envio à nuvem.
+                </div>
+              </div>
+              <div class="dossie-plan-item">
+                <span class="plan-badge badge-meta">Meta Semanal</span>
+                <div class="plan-body">
+                  <strong>Proteção de Receita Recorrente:</strong> Reduzir os clientes da faixa de Alto Risco de <span id="dossie-plan-current-risk">19</span> para menos de 5 estabelecimentos, resguardando o faturamento diário.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rodapé de Validação da Diretoria -->
+          <div class="dossie-footer-row">
+            <div class="dossie-sign-col">
+              <div class="dossie-sign-line"></div>
+              <div class="dossie-sign-role">Diretoria de Operações & Tecnologia</div>
+              <div class="dossie-sign-corp">BVX Tecnologia LTDA</div>
+            </div>
+            <div class="dossie-sign-col">
+              <div class="dossie-sign-line"></div>
+              <div class="dossie-sign-role">Gestão de Sucesso do Cliente (Customer Success)</div>
+              <div class="dossie-sign-corp">Programa Cliente 360</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary-action" id="modal-dossie-print-btn">
+          <span class="btn-icon">🖨️</span> Imprimir / Salvar Dossiê em PDF
+        </button>
+        <button class="btn-secondary" id="modal-dossie-close-bottom-btn">
           Fechar
         </button>
       </div>
