@@ -201,6 +201,7 @@
               <button class="filter-chip chip-success" data-filter="BAIXO RISCO">🟢 Saudável</button>
               <button class="filter-chip chip-outline" id="filter-backup-btn">💾 Backup Crítico</button>
               <button class="filter-chip chip-outline" id="filter-version-btn">📦 Versão Antiga</button>
+              <button class="filter-chip chip-outline chip-ia" id="filter-anomaly-btn">⚡ Anomalias IA</button>
             </div>
           </div>
 
@@ -247,7 +248,20 @@
                   <span class="gauge-max">/100</span>
                 </div>
                 <span class="risk-badge" id="detail-risk-badge">ALTO RISCO</span>
+                <button class="btn-export-pdf" id="btn-export-pdf" title="Exportar Ficha 360 em PDF/Impressão">
+                  📄 Exportar Ficha 360
+                </button>
               </div>
+            </div>
+
+            <!-- Banner de Anomalia Multivariada Detectada por IA (Isolation Forest / Colab) -->
+            <div class="ai-anomaly-banner" id="detail-anomaly-banner" style="display: none;">
+              <div class="ai-anomaly-icon">🤖</div>
+              <div class="ai-anomaly-body">
+                <div class="ai-anomaly-title">Anomalia Preditiva (Isolation Forest ML)</div>
+                <div class="ai-anomaly-desc" id="detail-anomaly-desc">Padrão atípico identificado nos pilares do cliente.</div>
+              </div>
+              <span class="ai-anomaly-badge">Alerta Preditivo</span>
             </div>
 
             <!-- 4 Pilares da Telemetria (Conforme Slide BVX) -->

@@ -12,7 +12,12 @@ from typing import Optional, List, Dict, Any
 import os
 
 from backend.data_simulator import gerar_base_clientes
-from backend.health_engine import calcular_health_score, simular_impacto, aplicar_clusterizacao_ml
+from backend.health_engine import (
+    calcular_health_score, 
+    simular_impacto, 
+    aplicar_clusterizacao_ml,
+    aplicar_deteccao_anomalias_ml
+)
 from backend.ai_copilot import gerar_diagnostico_cliente, gerar_mensagem_contato
 
 app = FastAPI(
@@ -41,8 +46,9 @@ def carregar_dados():
         c_completo = {**c, **hs}
         processados.append(c_completo)
     
-    # Aplica Machine Learning (Clusterização)
+    # Aplica Machine Learning (Clusterização K-Means e Detecção de Anomalias com Isolation Forest)
     processados = aplicar_clusterizacao_ml(processados)
+    processados = aplicar_deteccao_anomalias_ml(processados)
     BASE_CLIENTES = processados
 
 carregar_dados()
@@ -79,6 +85,7 @@ def get_dashboard_stats():
     faturamento_total_dia = sum(c["faturamento_diario_estimado"] for c in BASE_CLIENTES)
     backups_criticos = len([c for c in BASE_CLIENTES if c["dias_sem_backup"] >= 3 or not c.get("backup_integro", True)])
     versoes_antigas = len([c for c in BASE_CLIENTES if not c["versao_sistema"].startswith("5.4")])
+    total_anomalias = len([c for c in BASE_CLIENTES if c.get("alerta_anomalia", False)])
 
     return {
         "total_clientes": total,
@@ -94,13 +101,37 @@ def get_dashboard_stats():
         "faturamento_diario_monitorado": round(faturamento_total_dia, 2),
         "alertas_prioritarios": {
             "backups_criticos": backups_criticos,
-            "versoes_antigas": versoes_antigas
+            "versoes_antigas": versoes_antigas,
+            "anomalias_detectadas": total_anomalias
         },
         "ods_onu": {
             "ods_8": "Trabalho Decente e Crescimento Econômico - Prevenção de perdas comerciais nos PDVs",
             "ods_9": "Indústria, Inovação e Infraestrutura - Resiliência digital e segurança da informação"
         }
     }
+
+@app.get("/calcular_score")
+def calcular_score_colab_compat():
+    """
+    Endpoint compatível diretamente com o notebook do Google Colab (Hackathon BVX 2026).
+    Retorna o dataset processado com os scores e as predições do Isolation Forest.
+    """
+    resposta = []
+    for c in BASE_CLIENTES:
+        resposta.append({
+            "id_cliente": f"CLI{str(c['id']).zfill(4)}",
+            "nome_fantasia": c["nome_fantasia"],
+            "dias_sem_backup": c["dias_sem_backup"],
+            "tamanho_banco_gb": round(c.get("tamanho_backup_mb", 100) / 1024, 2),
+            "versao_sistema": c["versao_sistema"],
+            "variacao_vendas_percentual": c["variacao_vendas_pct"],
+            "chamados_abertos_mes": c["chamados_ultimos_30d"],
+            "score_saude": c["health_score"],
+            "alerta_anomalia": c.get("alerta_anomalia", False),
+            "tipo_anomalia": c.get("tipo_anomalia")
+        })
+    resposta.sort(key=lambda x: x["score_saude"])
+    return resposta
 
 @app.get("/api/clients")
 def get_clients(

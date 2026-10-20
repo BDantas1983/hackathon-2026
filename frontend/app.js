@@ -56,6 +56,7 @@ let allClients = [];
 let currentFilter = 'all';
 let filterBackupCritico = false;
 let filterVersaoAntiga = false;
+let filterAnomaliaIA = false;
 let selectedClient = null;
 
 // Instâncias Chart.js (controle de lifecycle)
@@ -167,6 +168,10 @@ function renderizarListaClientes() {
     if (filterVersaoAntiga && c.versao_sistema.startsWith('5.4')) {
       return false;
     }
+    // Filtro anomalia IA (Isolation Forest)
+    if (filterAnomaliaIA && !c.alerta_anomalia) {
+      return false;
+    }
     // Busca textual
     if (termoBusca) {
       const matchNome = c.nome_fantasia.toLowerCase().includes(termoBusca);
@@ -203,6 +208,9 @@ function renderizarListaClientes() {
     }
     if (c.variacao_vendas_pct <= -20) {
       tagsHtml += `<span class="mini-tag tag-backup-bad">📉 Vendas ${c.variacao_vendas_pct}%</span>`;
+    }
+    if (c.alerta_anomalia) {
+      tagsHtml += `<span class="mini-tag tag-ai-anomaly" title="${c.tipo_anomalia || 'Anomalia multivariada detectada por IA'}">⚡ IA: Anomalia</span>`;
     }
 
     return `
@@ -257,6 +265,20 @@ function selecionarCliente(cliente) {
   riskBadge.style.borderColor = cliente.cor_risco;
   gaugeCircle.style.borderColor = cliente.cor_risco;
   gaugeCircle.style.boxShadow = `0 0 20px ${cliente.cor_risco}40`;
+
+  // Banner de Anomalia Detectada por IA (Isolation Forest)
+  const anomalyBanner = document.getElementById('detail-anomaly-banner');
+  const anomalyDesc = document.getElementById('detail-anomaly-desc');
+  if (anomalyBanner && anomalyDesc) {
+    if (cliente.alerta_anomalia) {
+      anomalyBanner.style.display = 'flex';
+      anomalyDesc.innerText = cliente.tipo_anomalia 
+        ? `${cliente.tipo_anomalia} - Identificado pelo modelo preditivo Isolation Forest.`
+        : 'Padrão atípico multivariado identificado nos pilares operacionais.';
+    } else {
+      anomalyBanner.style.display = 'none';
+    }
+  }
 
   // 01. Pilar Versionamento
   document.getElementById('pillar-version-val').innerText = cliente.versao_sistema;
@@ -446,6 +468,28 @@ function configurarEventos() {
     btnVersao.classList.toggle('active', filterVersaoAntiga);
     renderizarListaClientes();
   });
+
+  // Filtro Anomalias IA (Isolation Forest)
+  const btnAnomaly = document.getElementById('filter-anomaly-btn');
+  if (btnAnomaly) {
+    btnAnomaly.addEventListener('click', () => {
+      filterAnomaliaIA = !filterAnomaliaIA;
+      btnAnomaly.classList.toggle('active', filterAnomaliaIA);
+      renderizarListaClientes();
+    });
+  }
+
+  // Exportar Ficha 360 em PDF / Impressão
+  const btnExportPdf = document.getElementById('btn-export-pdf');
+  if (btnExportPdf) {
+    btnExportPdf.addEventListener('click', () => {
+      if (!selectedClient) {
+        alert('Selecione um cliente para exportar o relatório 360.');
+        return;
+      }
+      window.print();
+    });
+  }
 
   // Busca textual
   document.getElementById('search-input').addEventListener('input', () => {

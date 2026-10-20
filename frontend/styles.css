@@ -1674,3 +1674,174 @@ body {
     height: 220px;
   }
 }
+
+/* ==================== ANOMALIAS IA & EXPORTAÇÃO PDF ==================== */
+
+/* Chip de Filtro IA */
+.filter-chip.chip-ia {
+  border-color: rgba(124, 58, 237, 0.4);
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.filter-chip.chip-ia:hover {
+  background: rgba(124, 58, 237, 0.12);
+  border-color: #7c3aed;
+}
+
+.filter-chip.chip-ia.active {
+  background: #7c3aed;
+  color: #ffffff;
+  border-color: #7c3aed;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+/* Mini Tag de Anomalia na Lista */
+.mini-tag.tag-ai-anomaly {
+  background: rgba(124, 58, 237, 0.12);
+  color: #6d28d9;
+  border: 1px solid rgba(124, 58, 237, 0.28);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  animation: pulse-soft 2s infinite ease-in-out;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Banner de Anomalia no Topo da Ficha 360 */
+.ai-anomaly-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(5, 102, 95, 0.08) 100%);
+  border: 1.5px solid rgba(124, 58, 237, 0.35);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-anomaly-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #7c3aed, var(--bvx-teal));
+}
+
+.ai-anomaly-icon {
+  font-size: 26px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.ai-anomaly-body {
+  flex: 1;
+}
+
+.ai-anomaly-title {
+  font-family: var(--font-title);
+  font-size: 14px;
+  font-weight: 800;
+  color: #5b21b6;
+  margin-bottom: 2px;
+}
+
+.ai-anomaly-desc {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.ai-anomaly-badge {
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: #7c3aed;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+/* Botão de Exportação em PDF */
+.btn-export-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-title);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bvx-primary);
+  background: #ffffff;
+  border: 1.5px solid var(--bvx-teal);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+
+.btn-export-pdf:hover {
+  background: var(--bvx-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(5, 102, 95, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Regras de Impressão / PDF */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  .top-navbar,
+  .kpis-section,
+  .alerts-banner,
+  .clients-column,
+  .simulator-box,
+  .ai-actions-box,
+  .modal-backdrop,
+  .btn-export-pdf {
+    display: none !important;
+  }
+  
+  .app-container {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .workspace-grid {
+    display: block !important;
+  }
+  
+  .detail-column,
+  .detail-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  
+  .pillars-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  .chart-section-360 {
+    page-break-inside: avoid;
+  }
+}
+

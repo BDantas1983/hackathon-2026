@@ -14,6 +14,7 @@ Inclui:
 from typing import Dict, Any, List, Tuple
 import numpy as np
 from sklearn.cluster import KMeans
+from sklearn.ensemble import IsolationForest
 
 def calcular_subscore_backup(dias_sem_backup: int, backup_integro: bool) -> float:
     if not backup_integro:
@@ -57,19 +58,18 @@ def calcular_subscore_vendas(variacao_pct: float) -> float:
     else:
         return 5.0
 
-def calcular_subscore_chamados(qtd_chamados: int) -> float:
+def calcular_subscore_chamados(qtd_chamados: int, variacao_vendas_pct: float = 0.0) -> float:
+    # Lógica Colab: 0 chamados com vendas em queda livre indica 'Cliente Silencioso' (abandono)
     if qtd_chamados == 0:
-        return 100.0
-    elif qtd_chamados == 1:
-        return 85.0
-    elif qtd_chamados == 2:
-        return 65.0
-    elif qtd_chamados <= 4:
-        return 40.0
-    elif qtd_chamados <= 7:
-        return 20.0
+        if variacao_vendas_pct <= -20:
+            return 25.0  # Risco grave de churn silencioso
+        return 90.0
+    elif 1 <= qtd_chamados <= 3:
+        return 100.0  # Comportamento saudável e equilibrado de suporte
+    elif 4 <= qtd_chamados <= 7:
+        return 50.0
     else:
-        return 5.0
+        return 20.0  # Instabilidade ou suporte excessivo
 
 def calcular_health_score(cliente: Dict[str, Any]) -> Dict[str, Any]:
     score_backup = calcular_subscore_backup(
@@ -81,7 +81,10 @@ def calcular_health_score(cliente: Dict[str, Any]) -> Dict[str, Any]:
         cliente.get("versao_atual_homologada", "5.4.2")
     )
     score_vendas = calcular_subscore_vendas(cliente["variacao_vendas_pct"])
-    score_chamados = calcular_subscore_chamados(cliente["chamados_ultimos_30d"])
+    score_chamados = calcular_subscore_chamados(
+        cliente["chamados_ultimos_30d"], 
+        cliente.get("variacao_vendas_pct", 0.0)
+    )
 
     # Pesos do negócio BVX:
     # Backup: 30% | Versão: 25% | Vendas: 25% | Chamados: 20%
@@ -200,3 +203,49 @@ def aplicar_clusterizacao_ml(clientes: List[Dict[str, Any]]) -> List[Dict[str, A
         c["cluster_nome"] = cluster_nomes.get(int(labels[i]), f"Cluster {labels[i]}")
 
     return clientes
+
+def aplicar_deteccao_anomalias_ml(clientes: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Detecção de Anomalias Não Supervisionada usando Isolation Forest (Conforme Google Colab BVX).
+    Identifica padrões atípicos multivariados (ex: Cliente Silencioso e Risco Iminente de Perda).
+    """
+    if len(clientes) < 5:
+        for c in clientes:
+            c["alerta_anomalia"] = False
+            c["tipo_anomalia"] = None
+        return clientes
+
+    # Features do modelo Colab: [dias_sem_backup, variacao_vendas_pct, chamados_ultimos_30d]
+    features = [
+        [
+            float(c["dias_sem_backup"]),
+            float(c["variacao_vendas_pct"]),
+            float(c["chamados_ultimos_30d"])
+        ]
+        for c in clientes
+    ]
+
+    X = np.array(features)
+    # Contaminação estimada em 8%
+    iso_forest = IsolationForest(contamination=0.08, random_state=42)
+    predicoes = iso_forest.fit_predict(X)
+
+    for i, c in enumerate(clientes):
+        is_anomaly = bool(predicoes[i] == -1)
+        c["alerta_anomalia"] = is_anomaly
+
+        if is_anomaly:
+            # Classificação explicável do tipo de anomalia
+            if c["chamados_ultimos_30d"] == 0 and c["variacao_vendas_pct"] < -20:
+                c["tipo_anomalia"] = "Cliente Silencioso (Risco de Churn Oculto)"
+            elif c["dias_sem_backup"] >= 4 or not c.get("backup_integro", True):
+                c["tipo_anomalia"] = "Vulnerabilidade Crítica de Backup"
+            elif not c["versao_sistema"].startswith("5.4"):
+                c["tipo_anomalia"] = "Defasagem Tecnológica Severa"
+            else:
+                c["tipo_anomalia"] = "Desvio Estatístico Multivariado"
+        else:
+            c["tipo_anomalia"] = None
+
+    return clientes
+

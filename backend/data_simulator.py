@@ -45,7 +45,30 @@ def gerar_base_clientes(qtd: int = 60) -> List[Dict[str, Any]]:
         # Simula perfis específicos (Críticos, Alerta e Saudáveis)
         tipo_perfil = random.choices(["saudavel", "alerta", "critico"], weights=[0.55, 0.25, 0.20])[0]
 
-        if tipo_perfil == "critico":
+        # Injeção de perfis do Colab: Cliente Silencioso e Risco Iminente
+        if i in [7, 23, 41]:
+            # Perfil 'Cliente Silencioso' (Colab): 0 chamados, mas queda drástica de faturamento
+            tipo_perfil = "critico"
+            versao = "5.3.1"
+            dias_sem_backup = 2
+            backup_integro = True
+            variacao_vendas_pct = random.randint(-55, -35)
+            chamados_ultimos_30d = 0  # Silencioso: não abre chamados mas está abandonando
+            faturamento_diario = random.uniform(3000, 12000)
+            contato_nome = "Marcos Silveira (Silencioso)"
+            nome = f"{tipo} {random.choice(NOMES_FANTASIA)} {i} (Silencioso)"
+        elif i in [14, 38]:
+            # Perfil 'Risco Iminente' (Colab): Muitos dias sem backup e versão desatualizada
+            tipo_perfil = "critico"
+            versao = "5.0.1"
+            dias_sem_backup = random.randint(12, 35)
+            backup_integro = False
+            variacao_vendas_pct = random.randint(-40, -15)
+            chamados_ultimos_30d = random.randint(5, 9)
+            faturamento_diario = random.uniform(4000, 15000)
+            contato_nome = "Valdir Mendes (Risco Iminente)"
+            nome = f"{tipo} {random.choice(NOMES_FANTASIA)} {i} (Risco Iminente)"
+        elif tipo_perfil == "critico":
             versao = random.choice(["5.0.1", "5.1.0"])
             dias_sem_backup = random.randint(4, 15)
             backup_integro = random.choice([True, False, False])
