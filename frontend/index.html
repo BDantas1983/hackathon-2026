@@ -253,9 +253,14 @@
                   <span class="gauge-max">/100</span>
                 </div>
                 <span class="risk-badge" id="detail-risk-badge">ALTO RISCO</span>
-                <button class="btn-os-tecnica" id="btn-gerar-os" title="Gerar Ordem de Serviço Preventiva Oficial para Atendimento Técnico">
-                  🛠️ Gerar O.S. Preventiva
-                </button>
+                <div class="doc-actions-row">
+                  <button class="btn-doc-action btn-os-tecnica" id="btn-gerar-os" title="Gerar Ordem de Serviço Preventiva Oficial para Atendimento Técnico">
+                    🛠️ O.S. Preventiva
+                  </button>
+                  <button class="btn-doc-action btn-laudo-cliente" id="btn-gerar-laudo" title="Gerar Laudo de Conformidade e Segurança Digital para o Cliente">
+                    📋 Laudo do Cliente
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -699,6 +704,146 @@
           <span class="btn-icon">🖨️</span> Imprimir O.S. Oficial (PDF)
         </button>
         <button class="btn-secondary" id="modal-os-close-bottom-btn">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL LAUDO TÉCNICO DE CONFORMIDADE (CLIENTE / COMERCIANTE) -->
+  <div class="modal-backdrop modal-laudo-backdrop" id="modal-laudo-conformidade" style="display: none;">
+    <div class="modal-card modal-laudo-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">📋</span>
+          <div>
+            <h3 class="modal-title">Laudo Técnico de Conformidade e Segurança Digital</h3>
+            <p class="modal-subtitle">Documento consultivo emitido pela BVX Tecnologia para o comerciante</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="modal-laudo-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body modal-laudo-body">
+        <!-- Folha A4 Simulação Laudo Consultivo Oficial BVX -->
+        <div class="laudo-sheet-a4" id="laudo-print-content">
+          
+          <!-- Cabeçalho Institucional Oficial -->
+          <div class="laudo-header">
+            <div class="laudo-header-brand">
+              <img src="assets/logo_bvx.webp" alt="BVX Tecnologia" class="laudo-logo">
+              <div>
+                <h2 class="laudo-title">LAUDO DE CONFORMIDADE & SEGURANÇA DIGITAL</h2>
+                <p class="laudo-sub">Programa de Prevenção e Continuidade Operacional • BVX Tecnologia</p>
+              </div>
+            </div>
+            <div class="laudo-header-meta">
+              <div class="laudo-protocol">Protocolo: <strong id="laudo-protocol">LAUDO-2026-0000</strong></div>
+              <div class="laudo-date">Data: <span id="laudo-date">20/10/2026</span></div>
+              <div class="laudo-badge-status" id="laudo-badge-status">OPERANDO COM VULNERABILIDADE</div>
+            </div>
+          </div>
+
+          <div class="laudo-divider"></div>
+
+          <!-- Mensagem Formal e Dados do Cliente -->
+          <div class="laudo-client-box">
+            <p class="laudo-intro">
+              À gerência e administração de <strong><span id="laudo-client-name">--</span></strong> (Código PDV: <span id="laudo-client-pdv">--</span>), aos cuidados de <strong><span id="laudo-client-resp">--</span></strong> em <span id="laudo-client-city">--</span>:
+            </p>
+            <p class="laudo-body-text">
+              A <strong>BVX Tecnologia</strong> atesta por meio deste instrumento técnico as condições de operação, conformidade fiscal e resiliência de dados do sistema ERP em funcionamento no seu estabelecimento comercial, conforme telemetria contínua processada em nossos servidores de segurança.
+            </p>
+          </div>
+
+          <!-- Pilares de Auditoria com Selos -->
+          <div class="laudo-pillars-section">
+            
+            <!-- Pilar A: Segurança do Banco de Dados & Backup -->
+            <div class="laudo-pillar-card" id="laudo-card-backup">
+              <div class="laudo-pillar-head">
+                <span class="laudo-pillar-icon">🛡️</span>
+                <div class="laudo-pillar-info">
+                  <h4 class="laudo-pillar-title">1. Proteção de Dados e Backup em Nuvem</h4>
+                  <span class="laudo-pillar-desc">Salvaguarda dos arquivos fiscais (XMLs), movimentação de estoque e histórico financeiro.</span>
+                </div>
+                <span class="laudo-stamp" id="laudo-stamp-backup">EM ALERTA</span>
+              </div>
+              <div class="laudo-pillar-detail" id="laudo-detail-backup">
+                Última rotina concluída há <strong>-- dias</strong>. A ausência de backup diário íntegro expõe o comércio a riscos severos de perda definitiva de dados em casos de sinistro elétrico ou pane de hardware.
+              </div>
+            </div>
+
+            <!-- Pilar B: Versão e Conformidade Fiscal -->
+            <div class="laudo-pillar-card" id="laudo-card-version">
+              <div class="laudo-pillar-head">
+                <span class="laudo-pillar-icon">📦</span>
+                <div class="laudo-pillar-info">
+                  <h4 class="laudo-pillar-title">2. Versão Homologada & Atualização Tributária (SEFAZ)</h4>
+                  <span class="laudo-pillar-desc">Conformidade com os padrões fiscais estaduais (SAT, NFC-e, EFD) e estabilidade de emissão.</span>
+                </div>
+                <span class="laudo-stamp" id="laudo-stamp-version">DEFASADA</span>
+              </div>
+              <div class="laudo-pillar-detail" id="laudo-detail-version">
+                Versão instalada: <strong>v--</strong> (Versão Oficial Homologada: <strong>v5.4.2</strong>). Recomendamos agendamento gratuito de atualização para garantir acesso às melhorias fiscais e correções de segurança.
+              </div>
+            </div>
+
+            <!-- Pilar C: Índice de Resiliência Tecnológica (Customer Health Score) -->
+            <div class="laudo-pillar-card" id="laudo-card-health">
+              <div class="laudo-pillar-head">
+                <span class="laudo-pillar-icon">📈</span>
+                <div class="laudo-pillar-info">
+                  <h4 class="laudo-pillar-title">3. Índice Geral de Estabilidade e Saúde Operacional</h4>
+                  <span class="laudo-pillar-desc">Cálculo de desempenho ponderado entre uso contínuo, estabilidade e ausência de travamentos.</span>
+                </div>
+                <span class="laudo-stamp" id="laudo-stamp-health">31 / 100</span>
+              </div>
+              <div class="laudo-pillar-detail" id="laudo-detail-health">
+                Classificação: <strong id="laudo-health-label">ALTO RISCO DE OPERAÇÃO</strong>. Nossa equipe técnica está mobilizada para apoiar sua empresa sem qualquer cobrança adicional.
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Parecer Consultivo de IA / Boas Práticas -->
+          <div class="laudo-advice-box">
+            <h4 class="laudo-advice-title">💡 RECOMENDAÇÕES PREVENTIVAS BVX TECNOLOGIA</h4>
+            <p id="laudo-advice-text">
+              Para assegurar a continuidade do seu faturamento e total proteção jurídica perante o fisco, solicitamos que nos conceda autorização remota para realizarmos a checagem do banco de dados e a sincronização do backup hoje mesmo.
+            </p>
+          </div>
+
+          <!-- Rodapé do Laudo com Carimbo e Assinatura -->
+          <div class="laudo-footer-box">
+            <div class="laudo-seal-box">
+              <div class="laudo-digital-seal">
+                <span class="seal-icon">🔒</span>
+                <div class="seal-text">
+                  <strong>BVX CERTIFIED</strong><br>
+                  <span>MONITORAMENTO 360</span><br>
+                  <small>AUTÊNTICO 2026</small>
+                </div>
+              </div>
+              <p class="seal-sub">Documento gerado por telemetria preditiva com garantia de integridade BVX Tecnologia.</p>
+            </div>
+
+            <div class="laudo-signature-box">
+              <div class="laudo-sign-line"></div>
+              <div class="laudo-sign-name">Departamento de Sucesso do Cliente & Operações</div>
+              <div class="laudo-sign-corp">BVX TECNOLOGIA LTDA • Inovação para o Varejo</div>
+              <div class="laudo-sign-contact">Central de Atendimento: suporte@bvxtecnologia.com.br</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary-action" id="modal-laudo-print-btn">
+          <span class="btn-icon">🖨️</span> Imprimir / Salvar Laudo em PDF
+        </button>
+        <button class="btn-secondary" id="modal-laudo-close-bottom-btn">
           Fechar
         </button>
       </div>

@@ -515,6 +515,39 @@ function configurarEventos() {
     });
   }
 
+  // Botão Gerar Laudo de Conformidade (Cliente)
+  const btnGerarLaudo = document.getElementById('btn-gerar-laudo');
+  if (btnGerarLaudo) {
+    btnGerarLaudo.addEventListener('click', () => {
+      abrirModalLaudo(selectedClient);
+    });
+  }
+
+  // Modais de Laudo do Cliente
+  const btnCloseLaudo = document.getElementById('modal-laudo-close-btn');
+  if (btnCloseLaudo) {
+    btnCloseLaudo.addEventListener('click', fecharModalLaudo);
+  }
+
+  const btnCloseLaudoBottom = document.getElementById('modal-laudo-close-bottom-btn');
+  if (btnCloseLaudoBottom) {
+    btnCloseLaudoBottom.addEventListener('click', fecharModalLaudo);
+  }
+
+  const modalLaudo = document.getElementById('modal-laudo-conformidade');
+  if (modalLaudo) {
+    modalLaudo.addEventListener('click', (e) => {
+      if (e.target.id === 'modal-laudo-conformidade') fecharModalLaudo();
+    });
+  }
+
+  const btnPrintLaudo = document.getElementById('modal-laudo-print-btn');
+  if (btnPrintLaudo) {
+    btnPrintLaudo.addEventListener('click', () => {
+      window.print();
+    });
+  }
+
   // Modal de Análise Estratégica de Extremos (Colab / Top 10)
   const btnExtremos = document.getElementById('btn-open-extremos-modal');
   if (btnExtremos) {
@@ -1053,4 +1086,104 @@ function fecharModalOS() {
   const modal = document.getElementById('modal-os-preventiva');
   if (modal) modal.style.display = 'none';
 }
+
+// ==================== LAUDO TÉCNICO DE CONFORMIDADE (CLIENTE) ====================
+
+function abrirModalLaudo(cliente) {
+  const c = cliente || selectedClient;
+  if (!c) {
+    alert('Por favor, selecione um estabelecimento na lista para emitir o Laudo de Conformidade.');
+    return;
+  }
+
+  const modal = document.getElementById('modal-laudo-conformidade');
+  if (!modal) return;
+
+  const now = new Date();
+  const dataFormatada = now.toLocaleDateString('pt-BR');
+
+  // Cabeçalho e Metadados
+  document.getElementById('laudo-protocol').innerText = `LAUDO-2026-${String(c.id).padStart(4, '0')}`;
+  document.getElementById('laudo-date').innerText = dataFormatada;
+
+  // Status Geral do Laudo
+  const statusBadge = document.getElementById('laudo-badge-status');
+  if (c.health_score < 50) {
+    statusBadge.innerText = 'VULNERABILIDADE CRÍTICA IDENTIFICADA';
+    statusBadge.style.background = '#dc2626';
+  } else if (c.health_score < 75) {
+    statusBadge.innerText = 'ATENÇÃO OPERACIONAL REQUERIDA';
+    statusBadge.style.background = '#d97706';
+  } else {
+    statusBadge.innerText = 'CONFORME E OPERACIONALMENTE SEGURO';
+    statusBadge.style.background = '#16a34a';
+  }
+
+  // Identificação do Comércio
+  document.getElementById('laudo-client-name').innerText = c.nome_fantasia;
+  document.getElementById('laudo-client-pdv').innerText = c.codigo_pdv;
+  document.getElementById('laudo-client-resp').innerText = c.responsavel;
+  document.getElementById('laudo-client-city').innerText = `${c.cidade} - ${c.uf}`;
+
+  // Selo 1: Backup
+  const stampBackup = document.getElementById('laudo-stamp-backup');
+  const detailBackup = document.getElementById('laudo-detail-backup');
+  if (c.dias_sem_backup <= 1 && c.backup_integro) {
+    stampBackup.innerText = 'CONFORME';
+    stampBackup.className = 'laudo-stamp stamp-green';
+    detailBackup.innerHTML = `Rotina atualizada realizada <strong>hoje/ontem</strong> com integridade atestada. Os arquivos fiscais (XMLs) e o estoque estão devidamente resguardados na nuvem segura BVX.`;
+  } else {
+    stampBackup.innerText = c.dias_sem_backup >= 4 ? 'RISCO CRÍTICO' : 'EM ALERTA';
+    stampBackup.className = c.dias_sem_backup >= 4 ? 'laudo-stamp stamp-red' : 'laudo-stamp stamp-yellow';
+    detailBackup.innerHTML = `Última sincronização válida registrada há <strong>${c.dias_sem_backup} dias</strong>. A ausência de backup regular expõe seu negócio a perdas irreversíveis em casos de pane mecânica ou queima de computadores.`;
+  }
+
+  // Selo 2: Versão
+  const stampVersion = document.getElementById('laudo-stamp-version');
+  const detailVersion = document.getElementById('laudo-detail-version');
+  const isHomolog = c.versao_sistema.startsWith('5.4');
+  if (isHomolog) {
+    stampVersion.innerText = 'HOMOLOGADA';
+    stampVersion.className = 'laudo-stamp stamp-green';
+    detailVersion.innerHTML = `Versão instalada: <strong>v${c.versao_sistema}</strong>. O sistema opera com a versão mais recente e estável, em total conformidade com as exigências da SEFAZ e emissão fiscal rápida.`;
+  } else {
+    stampVersion.innerText = 'DEFASADA';
+    stampVersion.className = 'laudo-stamp stamp-yellow';
+    detailVersion.innerHTML = `Versão em uso: <strong>v${c.versao_sistema}</strong> (Versão Oficial Vigente: <strong>v5.4.2</strong>). Recomendamos agendar a atualização gratuita para garantir acesso às melhorias fiscais e correções de segurança.`;
+  }
+
+  // Selo 3: Índice Geral de Saúde
+  const stampHealth = document.getElementById('laudo-stamp-health');
+  const detailHealth = document.getElementById('laudo-detail-health');
+  stampHealth.innerText = `${c.health_score} / 100`;
+  if (c.health_score >= 75) {
+    stampHealth.className = 'laudo-stamp stamp-green';
+    detailHealth.innerHTML = `Classificação: <strong style="color: #16a34a;">ESTABELECIMENTO SAUDÁVEL</strong>. Seu comércio demonstra excelente disciplina técnica e estabilidade de operação contínua.`;
+  } else if (c.health_score >= 50) {
+    stampHealth.className = 'laudo-stamp stamp-yellow';
+    detailHealth.innerHTML = `Classificação: <strong style="color: #d97706;">ATENÇÃO MODERADA</strong>. Pequenos ajustes de rotina de cópia ou versão elevarão a segurança do seu PDV.`;
+  } else {
+    stampHealth.className = 'laudo-stamp stamp-red';
+    detailHealth.innerHTML = `Classificação: <strong style="color: #dc2626;">ALTO RISCO DE OPERAÇÃO</strong>. Nossa equipe técnica está à sua inteira disposição para apoiar sua empresa sem qualquer cobrança adicional.`;
+  }
+
+  // Recomendações Consultivas
+  let conselho = '';
+  if (c.health_score >= 75) {
+    conselho = 'Parabéns pela excelência na gestão técnica do seu PDV! Mantenha a rotina automática de fechamento diário ativa para preservar a segurança máxima dos seus dados fiscais.';
+  } else if (c.dias_sem_backup >= 3) {
+    conselho = 'Prioridade Imediata: Recomendamos autorizar a execução da rotina de cópia de segurança em nuvem ainda hoje. Nossa equipe pode conectá-lo remotamente em menos de 10 minutos para concluir o procedimento sem interromper suas vendas.';
+  } else {
+    conselho = 'Recomendamos o agendamento de uma revisão preventiva com nosso suporte para atualização de versão e alinhamento de rotinas operacionais.';
+  }
+  document.getElementById('laudo-advice-text').innerText = conselho;
+
+  modal.style.display = 'flex';
+}
+
+function fecharModalLaudo() {
+  const modal = document.getElementById('modal-laudo-conformidade');
+  if (modal) modal.style.display = 'none';
+}
+
 
