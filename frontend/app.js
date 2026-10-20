@@ -3,9 +3,49 @@
  * Consome os endpoints da API FastAPI e interage com o Copiloto de IA
  */
 
-const API_BASE = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
-  ? '' 
-  : ''; // Mantém relativo para deploy no Vercel ou Render
+// Detecta a URL base da API (suporte a localhost, Vercel e Render)
+function obterApiBase() {
+  const isLocal = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
+  if (isLocal) {
+    return '';
+  }
+  const salva = localStorage.getItem('BVX_RENDER_API');
+  if (salva) {
+    return salva.replace(/\/$/, '');
+  }
+  return '';
+}
+
+let API_BASE = obterApiBase();
+
+function atualizarStatusConexaoApi() {
+  const label = document.getElementById('api-status-label');
+  if (!label) return;
+  const isLocal = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
+  if (isLocal) {
+    label.innerText = 'API Local (8000)';
+  } else if (localStorage.getItem('BVX_RENDER_API')) {
+    label.innerText = 'Render Conectado';
+  } else {
+    label.innerText = 'Conectar Render';
+  }
+}
+
+function abrirConfigApi() {
+  const atual = localStorage.getItem('BVX_RENDER_API') || '';
+  const novaUrl = prompt(
+    "Insira a URL pública do seu backend no Render (ex: https://bvx360-backend.onrender.com):\n\n(Deixe vazio para usar a rota relativa padrão)",
+    atual
+  );
+  if (novaUrl !== null) {
+    if (novaUrl.trim()) {
+      localStorage.setItem('BVX_RENDER_API', novaUrl.trim());
+    } else {
+      localStorage.removeItem('BVX_RENDER_API');
+    }
+    window.location.reload();
+  }
+}
 
 let allClients = [];
 let currentFilter = 'all';
@@ -15,6 +55,7 @@ let selectedClient = null;
 
 // ==================== INICIALIZAÇÃO ====================
 document.addEventListener('DOMContentLoaded', () => {
+  atualizarStatusConexaoApi();
   carregarEstatisticas();
   carregarAlertas();
   carregarClientes();

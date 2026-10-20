@@ -6,10 +6,14 @@
   <title>BVX 360 | Inteligência, Prevenção e Ação</title>
   <meta name="description" content="Plataforma de inteligência preditiva para antecipação de churn, monitoramento de telemetria e Customer Health Score para a BVX Tecnologia.">
   
-  <!-- Fontes Google -->
+  <!-- Favicon BVX -->
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  
+  <!-- Fontes Oficiais BVX Tecnologia (Montserrat + Open Sans) & Auxiliares -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,20 +22,25 @@
   <header class="app-header">
     <div class="header-container">
       <div class="brand-group">
-        <div class="brand-logo">
-          <div class="hex-icon">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-          </div>
-          <div>
-            <h1 class="brand-title">BVX <span>360</span></h1>
-            <p class="brand-subtitle">Inteligência, Prevenção e Ação</p>
-          </div>
+        <a href="https://bvxtecnologia.com.br/" target="_blank" rel="noopener noreferrer" class="bvx-logo-link" title="Acessar site institucional da BVX Tecnologia">
+          <img src="assets/logo_bvx.webp" alt="BVX Tecnologia" class="bvx-header-logo">
+        </a>
+        <div class="brand-divider"></div>
+        <div class="brand-app-info">
+          <h1 class="brand-title">BVX <span>360</span></h1>
+          <p class="brand-subtitle">Inteligência, Prevenção e Ação</p>
         </div>
       </div>
 
       <div class="header-badges">
+        <a href="https://bvxtecnologia.com.br/" target="_blank" rel="noopener noreferrer" class="status-chip bvx-portal-chip" title="Acessar o portal oficial da BVX Tecnologia">
+          <span>🌐</span>
+          <span>bvxtecnologia.com.br</span>
+        </a>
+        <button class="status-chip api-config-chip" id="btn-config-api" title="Clique para configurar ou alterar a URL do backend no Render" onclick="abrirConfigApi()">
+          <span>⚙️</span>
+          <span id="api-status-label">Conexão API</span>
+        </button>
         <div class="status-chip live-telemetry">
           <span class="pulse-dot"></span>
           <span>Telemetria em Tempo Real</span>
@@ -50,6 +59,23 @@
 
   <!-- Container Principal -->
   <main class="main-content">
+
+    <!-- Banner Institucional BVX -->
+    <section class="bvx-hero-banner">
+      <div class="bvx-hero-inner">
+        <div class="bvx-hero-text">
+          <span class="bvx-pill-tag">BVX TECNOLOGIA • PLATAFORMA 360</span>
+          <h2 class="bvx-hero-title">Gestão Eficaz para <span>Alavancar suas Vendas</span></h2>
+          <p class="bvx-hero-desc">Monitoramento inteligente de telemetria, prevenção de cancelamentos (churn) e acompanhamento preditivo de saúde da carteira.</p>
+        </div>
+        <div class="bvx-hero-actions">
+          <a href="https://bvxtecnologia.com.br/" target="_blank" rel="noopener noreferrer" class="btn-bvx-corp">
+            <span>Visitar Portal Oficial BVX</span>
+            <span class="btn-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
     
     <!-- Seção de KPIs do Dashboard Geral -->
     <section class="kpi-grid" id="kpi-section">
@@ -391,8 +417,18 @@
   <!-- Rodapé Institucional -->
   <footer class="app-footer">
     <div class="footer-container">
-      <p>Desenvolvido para o <strong>Hackathon Fatecou 2026</strong> em parceria com a <strong>BVX Tecnologia</strong>.</p>
-      <p class="ods-footer-note">Compromisso com <strong>ODS 8</strong> (Trabalho Decente e Crescimento Econômico) e <strong>ODS 9</strong> (Indústria, Inovação e Infraestrutura).</p>
+      <div class="footer-brand-wrap">
+        <a href="https://bvxtecnologia.com.br/" target="_blank" rel="noopener noreferrer" title="BVX Tecnologia">
+          <img src="assets/logo_bvx.webp" alt="BVX Tecnologia" class="bvx-footer-logo">
+        </a>
+        <p>Desenvolvido para o <strong>Hackathon Fatecou 2026</strong> em parceria com a <strong>BVX Tecnologia</strong>.</p>
+      </div>
+      <div class="footer-right-wrap">
+        <a href="https://bvxtecnologia.com.br/" target="_blank" rel="noopener noreferrer" class="footer-bvx-link">
+          Portal Oficial BVX Tecnologia ↗
+        </a>
+        <p class="ods-footer-note">Compromisso com <strong>ODS 8</strong> (Trabalho Decente) e <strong>ODS 9</strong> (Indústria & Inovação).</p>
+      </div>
     </div>
   </footer>
 
