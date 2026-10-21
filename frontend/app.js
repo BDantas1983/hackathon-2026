@@ -613,6 +613,40 @@ function configurarEventos() {
     });
   }
 
+  // Modal Gráfico de Perdas (Colab)
+  const btnGraficoPerdas = document.getElementById('btn-grafico-perdas');
+  if (btnGraficoPerdas) {
+    btnGraficoPerdas.addEventListener('click', abrirModalGraficoPerdas);
+  }
+
+  const btnClosePerdas = document.getElementById('modal-perdas-close-btn');
+  if (btnClosePerdas) {
+    btnClosePerdas.addEventListener('click', fecharModalGraficoPerdas);
+  }
+
+  const btnClosePerdasBottom = document.getElementById('modal-perdas-close-bottom-btn');
+  if (btnClosePerdasBottom) {
+    btnClosePerdasBottom.addEventListener('click', fecharModalGraficoPerdas);
+  }
+
+  const modalPerdas = document.getElementById('modal-grafico-perdas');
+  if (modalPerdas) {
+    modalPerdas.addEventListener('click', (e) => {
+      if (e.target.id === 'modal-grafico-perdas') fecharModalGraficoPerdas();
+    });
+  }
+
+  const btnSimularPerdas = document.getElementById('modal-perdas-simular-btn');
+  if (btnSimularPerdas) {
+    btnSimularPerdas.addEventListener('click', () => {
+      fecharModalGraficoPerdas();
+      const simSection = document.querySelector('.simulator-card');
+      if (simSection) {
+        simSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }
+
   // Abas do Modal de Extremos
   const tabInterativo = document.getElementById('tab-btn-interativo');
   const tabOriginal = document.getElementById('tab-btn-original');
@@ -1294,6 +1328,143 @@ function abrirModalDossie() {
 
 function fecharModalDossie() {
   const modal = document.getElementById('modal-dossie-diretoria');
+  if (modal) modal.style.display = 'none';
+}
+
+// ==================== GRÁFICO DE DECOMPOSIÇÃO DE PERDAS (INSPIRAÇÃO COLAB) ====================
+let chartPerdasInstance = null;
+
+function abrirModalGraficoPerdas() {
+  if (!selectedClient) {
+    alert('Por favor, selecione um cliente na lista primeiro.');
+    return;
+  }
+
+  const c = selectedClient;
+  const modal = document.getElementById('modal-grafico-perdas');
+  if (!modal) return;
+
+  const sub = c.detalhe_subscores || { backup: 50, versao: 50, vendas: 50, chamados: 50 };
+
+  // Cálculo das perdas baseado nos pesos da BVX (Base 100):
+  // Backup (peso 30%), Versão (peso 25%), Vendas (peso 25%), Chamados (peso 20%)
+  const ptsBackup = (sub.backup || 0) * 0.30;
+  const ptsVersao = (sub.versao || 0) * 0.25;
+  const ptsVendas = (sub.vendas || 0) * 0.25;
+  const ptsChamados = (sub.chamados || 0) * 0.20;
+
+  const scoreRestante = Math.max(0, +(ptsBackup + ptsVersao + ptsVendas + ptsChamados).toFixed(1));
+  const perdaBackup = Math.max(0, +(30 - ptsBackup).toFixed(1));
+  const perdaVersao = Math.max(0, +(25 - ptsVersao).toFixed(1));
+  const perdaVendas = Math.max(0, +(25 - ptsVendas).toFixed(1));
+  const perdaChamados = Math.max(0, +(20 - ptsChamados).toFixed(1));
+
+  // Preenche dados do cliente
+  document.getElementById('perdas-pdv-badge').innerText = c.codigo_pdv || 'PDV-0000';
+  document.getElementById('perdas-client-name').innerText = c.nome_fantasia || 'Cliente';
+  document.getElementById('perdas-score-val').innerText = `${c.health_score} / 100`;
+
+  const riskTag = document.getElementById('perdas-risk-tag');
+  riskTag.innerText = c.risco || (c.health_score < 50 ? 'ALTO RISCO' : c.health_score < 75 ? 'ATENÇÃO' : 'BAIXO RISCO');
+  riskTag.style.background = c.cor_risco || (c.health_score < 50 ? '#dc2626' : c.health_score < 75 ? '#d97706' : '#16a34a');
+
+  // Valores numéricos e barras
+  document.getElementById('factor-restante-val').innerText = `+${scoreRestante} pts`;
+  document.getElementById('bar-restante').style.width = `${Math.min(100, scoreRestante)}%`;
+
+  document.getElementById('factor-backup-val').innerText = `-${perdaBackup} pts`;
+  document.getElementById('bar-backup').style.width = `${(perdaBackup / 30) * 100}%`;
+  document.getElementById('factor-backup-desc').innerText = `${c.dias_sem_backup} dias sem envio de cópia (${c.backup_integro ? 'integridade ok' : 'falha de integridade'}).`;
+
+  document.getElementById('factor-versao-val').innerText = `-${perdaVersao} pts`;
+  document.getElementById('bar-versao').style.width = `${(perdaVersao / 25) * 100}%`;
+  document.getElementById('factor-versao-desc').innerText = `Versão instalada: ${c.versao_sistema} (homologada atual: ${c.versao_atual_homologada || '5.4.2'}).`;
+
+  document.getElementById('factor-vendas-val').innerText = `-${perdaVendas} pts`;
+  document.getElementById('bar-vendas').style.width = `${(perdaVendas / 25) * 100}%`;
+  document.getElementById('factor-vendas-desc').innerText = `Variação de vendas de ${c.variacao_vendas_pct}% nos últimos 30 dias.`;
+
+  document.getElementById('factor-chamados-val').innerText = `-${perdaChamados} pts`;
+  document.getElementById('bar-chamados').style.width = `${(perdaChamados / 20) * 100}%`;
+  document.getElementById('factor-chamados-desc').innerText = `${c.chamados_ultimos_30d} chamados de suporte abertos no mês.`;
+
+  // Insight Preditivo dinâmico
+  const perdasArray = [
+    { nome: 'rotina de backup', perda: perdaBackup, acao: 'realizar sincronização imediata de backup' },
+    { nome: 'versão defasada do sistema', perda: perdaVersao, acao: 'atualizar para a versão homologada 5.4.2' },
+    { nome: 'queda acentuada de vendas', perda: perdaVendas, acao: 'contato consultivo para diagnóstico operacional' },
+    { nome: 'instabilidade de chamados', perda: perdaChamados, acao: 'revisão técnica dos terminais de atendimento' }
+  ].sort((a, b) => b.perda - a.perda);
+
+  const maiorPerda = perdasArray[0];
+  document.getElementById('perdas-insight-text').innerHTML = `O maior gargalo de saúde deste cliente é <strong>${maiorPerda.nome}</strong> (penalidade de <strong>${maiorPerda.perda} pontos</strong>). Ação recomendada: <strong>${maiorPerda.acao}</strong>.`;
+
+  // Renderização do Gráfico de Pizza no Canvas (Chart.js)
+  const canvas = document.getElementById('chart-perdas-pie');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    if (chartPerdasInstance) {
+      chartPerdasInstance.destroy();
+    }
+
+    chartPerdasInstance = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: [
+          'Pontuação Restante',
+          'Perda por Backup (Risco)',
+          'Perda por Versão Desatualizada',
+          'Perda por Queda de Vendas',
+          'Perda por Chamados/Suporte'
+        ],
+        datasets: [{
+          data: [scoreRestante, perdaBackup, perdaVersao, perdaVendas, perdaChamados],
+          backgroundColor: [
+            '#2a9d8f', // Pontuação Restante (Teal / Verde BVX)
+            '#e63946', // Backup (Vermelho vibrante)
+            '#f4a261', // Versão (Laranja quente)
+            '#e76f51', // Vendas (Terracota / Salmão)
+            '#457b9d'  // Chamados (Azul petróleo)
+          ],
+          borderWidth: 2,
+          borderColor: '#ffffff',
+          hoverOffset: 12
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          animateScale: true,
+          animateRotate: true
+        },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              font: { family: 'Open Sans', size: 11, weight: '600' },
+              boxWidth: 14,
+              padding: 10
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const val = context.raw || 0;
+                return ` ${context.label}: ${val} pts (${val.toFixed(1)}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  modal.style.display = 'flex';
+}
+
+function fecharModalGraficoPerdas() {
+  const modal = document.getElementById('modal-grafico-perdas');
   if (modal) modal.style.display = 'none';
 }
 

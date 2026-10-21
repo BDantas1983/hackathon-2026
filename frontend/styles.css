@@ -2323,6 +2323,19 @@ body {
   width: 100%;
 }
 
+.btn-grafico-perdas {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+.btn-grafico-perdas:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);
+}
+
 .btn-laudo-cliente {
   background: #ffffff;
   color: var(--bvx-primary);
@@ -3026,6 +3039,220 @@ body {
 .dossie-sign-corp {
   font-size: 10px;
   color: #64748b;
+}
+
+/* ==================== MODAL GRÁFICO DE PERDAS (INSPIRAÇÃO COLAB) ==================== */
+.modal-perdas-card {
+  max-width: 860px !important;
+  width: 95vw !important;
+  max-height: 92vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #ffffff !important;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.modal-perdas-body {
+  overflow-y: auto !important;
+  max-height: calc(90vh - 130px) !important;
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px;
+}
+
+.perdas-header-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  padding: 16px 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.perdas-pdv-badge {
+  display: inline-block;
+  background: var(--bvx-primary);
+  color: #ffffff;
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.perdas-client-name {
+  font-family: var(--font-title);
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.perdas-sub-label {
+  font-size: 11.5px;
+  color: #64748b;
+  margin: 2px 0 0 0;
+}
+
+.perdas-score-badge-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.perdas-score-tag {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.perdas-score-val {
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.perdas-risk-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #ffffff;
+}
+
+.perdas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 24px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .perdas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.perdas-chart-container {
+  position: relative;
+  height: 330px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fdfdfd;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+  padding: 10px;
+}
+
+.perdas-factors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.perdas-factors-title {
+  font-family: var(--font-title);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+
+.perda-factor-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+.perda-factor-item:hover {
+  transform: translateX(3px);
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.factor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.factor-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.factor-name {
+  font-family: var(--font-title);
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e293b;
+  flex: 1;
+}
+
+.factor-val {
+  font-family: var(--font-title);
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.factor-val.val-loss {
+  color: #dc2626;
+}
+
+.factor-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.factor-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.factor-desc {
+  font-size: 10.5px;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+.perdas-insight-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #166534;
+  font-size: 12.5px;
+}
+
+.insight-icon {
+  font-size: 20px;
+  flex-shrink: 0;
 }
 
 /* Regras de Impressão (O.S., Laudo ou Dossiê) */
