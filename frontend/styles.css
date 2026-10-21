@@ -1136,13 +1136,13 @@ body {
 
 .detail-profile-header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: flex-start;
   margin-bottom: 24px;
   padding-bottom: 18px;
   border-bottom: 1px solid #f1f5f9;
-  flex-wrap: wrap;
-  gap: 16px;
+  gap: 14px;
+  width: 100%;
 }
 
 .detail-tag-row {
