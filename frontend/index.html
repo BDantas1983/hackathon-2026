@@ -37,34 +37,69 @@
       </div>
 
       <div class="header-badges">
-        <a href="https://bvxtecnologia.com.br/" target="_blank" rel="noopener noreferrer" class="status-chip bvx-portal-chip" title="Acessar o portal oficial da BVX Tecnologia">
-          <span>🌐</span>
-          <span>bvxtecnologia.com.br</span>
-        </a>
-        <button class="status-chip api-config-chip" id="btn-config-api" title="Clique para configurar ou alterar a URL do backend no Render" onclick="abrirConfigApi()">
-          <span>⚙️</span>
-          <span id="api-status-label">Conexão API</span>
-        </button>
-        <div class="status-chip live-telemetry">
+        <div class="status-chip live-telemetry" title="Telemetria contínua dos PDVs e modelos de Machine Learning em tempo real">
           <span class="pulse-dot"></span>
-          <span>Telemetria em Tempo Real</span>
+          <span>Telemetria & IA Ativas</span>
         </div>
-        <div class="status-chip ai-chip">
-          <span class="ai-sparkle">✨</span>
-          <span>Copiloto FreeLLMAPI Ativo</span>
+
+        <!-- DROPDOWN CENTRAL DE RELATÓRIOS & AÇÕES -->
+        <div class="dropdown-wrap" id="reports-dropdown-wrap">
+          <button class="status-chip dropdown-trigger-btn" id="btn-toggle-reports-menu" title="Acessar Central de Relatórios e Ações">
+            <span>📑</span>
+            <span>Relatórios & Ações</span>
+            <span class="dropdown-caret">▾</span>
+          </button>
+          
+          <div class="reports-dropdown-menu" id="reports-dropdown-menu" style="display: none;">
+            
+            <!-- Bloco 1: Gestão Geral da Carteira -->
+            <div class="dropdown-section-header">VISÃO DA CARTEIRA</div>
+            <button class="dropdown-item" id="menu-item-dossie">
+              <span class="dropdown-item-icon">📑</span>
+              <div class="dropdown-item-info">
+                <div class="dropdown-item-title">Dossiê Executivo da Diretoria</div>
+                <div class="dropdown-item-desc">Visão macro, R$ sob risco e plano diretor</div>
+              </div>
+            </button>
+            <button class="dropdown-item" id="menu-item-extremos">
+              <span class="dropdown-item-icon">📊</span>
+              <div class="dropdown-item-info">
+                <div class="dropdown-item-title">Análise de Extremos (Top 10)</div>
+                <div class="dropdown-item-desc">Casos extremos e risco de valência técnica</div>
+              </div>
+            </button>
+
+            <div class="dropdown-divider"></div>
+
+            <!-- Bloco 2: Ações do Cliente Selecionado -->
+            <div class="dropdown-section-header">
+              <span>CLIENTE SELECIONADO:</span>
+              <strong id="dropdown-client-indicator" class="dropdown-client-name">Nenhum selecionado</strong>
+            </div>
+            <button class="dropdown-item item-client-action" id="menu-item-perdas">
+              <span class="dropdown-item-icon">📈</span>
+              <div class="dropdown-item-info">
+                <div class="dropdown-item-title">Gráfico de Perdas de Saúde</div>
+                <div class="dropdown-item-desc">Decomposição das penalidades (Base 100)</div>
+              </div>
+            </button>
+            <button class="dropdown-item item-client-action" id="menu-item-os">
+              <span class="dropdown-item-icon">🛠️</span>
+              <div class="dropdown-item-info">
+                <div class="dropdown-item-title">Ordem de Serviço Preventiva (O.S.)</div>
+                <div class="dropdown-item-desc">Documento técnico A4 para visita de campo</div>
+              </div>
+            </button>
+            <button class="dropdown-item item-client-action" id="menu-item-laudo">
+              <span class="dropdown-item-icon">📋</span>
+              <div class="dropdown-item-info">
+                <div class="dropdown-item-title">Laudo Técnico de Conformidade</div>
+                <div class="dropdown-item-desc">Parecer consultivo A4 para o comerciante</div>
+              </div>
+            </button>
+
+          </div>
         </div>
-        <div class="status-chip ods-chip" title="Alinhado aos Objetivos de Desenvolvimento Sustentável da ONU">
-          <span class="ods-badge">ODS 8 & 9</span>
-          <span>Crescimento & Inovação</span>
-        </div>
-        <button class="status-chip report-trigger-chip" id="btn-open-extremos-modal" title="Abrir Análise Estratégica de Extremos e Risco de Valência">
-          <span>📊</span>
-          <span>Relatório de Extremos (Top 10)</span>
-        </button>
-        <button class="status-chip dossier-trigger-chip" id="btn-open-dossier-modal" title="Abrir Dossiê Executivo Consolidado para a Diretoria">
-          <span>📑</span>
-          <span>Dossiê da Diretoria</span>
-        </button>
       </div>
     </div>
   </header>
@@ -257,20 +292,10 @@
                   <span class="gauge-max">/100</span>
                 </div>
                 <span class="risk-badge" id="detail-risk-badge">ALTO RISCO</span>
-                <div class="doc-actions-row">
-                  <button class="btn-doc-action btn-grafico-perdas" id="btn-grafico-perdas" title="Ver Gráfico de Distribuição e Decomposição de Perdas de Saúde">
-                    📊 Gráfico de Perdas
-                  </button>
-                  <button class="btn-doc-action btn-os-tecnica" id="btn-gerar-os" title="Gerar Ordem de Serviço Preventiva Oficial para Atendimento Técnico">
-                    🛠️ O.S. Preventiva
-                  </button>
-                  <button class="btn-doc-action btn-laudo-cliente" id="btn-gerar-laudo" title="Gerar Laudo de Conformidade e Segurança Digital para o Cliente">
-                    📋 Laudo do Cliente
-                  </button>
-                  <button class="btn-doc-action btn-dossie-diretoria" id="btn-gerar-dossie-ficha" title="Gerar Dossiê Executivo de Risco & Retenção da Carteira para a Diretoria">
-                    📑 Dossiê da Diretoria
-                  </button>
-                </div>
+                <button class="btn-client-reports" id="btn-client-reports" title="Abrir Central de Relatórios e Ações deste Cliente">
+                  <span>📑</span>
+                  <span>Relatórios & Ações ▾</span>
+                </button>
               </div>
             </div>
 
@@ -1142,7 +1167,12 @@
         <a href="https://bvxtecnologia.com.br/" target="_blank" rel="noopener noreferrer" class="footer-bvx-link">
           Portal Oficial BVX Tecnologia ↗
         </a>
-        <p class="ods-footer-note">Compromisso com <strong>ODS 8</strong> (Trabalho Decente) e <strong>ODS 9</strong> (Indústria & Inovação).</p>
+        <div class="footer-meta-row">
+          <span class="ods-footer-pill">ODS 8 & 9 • Crescimento & Inovação</span>
+          <button class="footer-api-link" id="btn-config-api" title="Configurar conexão do backend" onclick="abrirConfigApi()">
+            <span>⚙️</span> <span id="api-status-label">API Conectada</span>
+          </button>
+        </div>
       </div>
     </div>
   </footer>

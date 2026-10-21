@@ -192,8 +192,8 @@ body {
 .header-badges {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 12px;
+  flex-wrap: nowrap;
 }
 
 .status-chip {
@@ -234,6 +234,158 @@ body {
 
 .api-config-chip:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* ==================== DROPDOWN CENTRAL DE RELATÓRIOS ==================== */
+.dropdown-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-trigger-btn {
+  background: linear-gradient(135deg, #008d85 0%, #05665f 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 4px 14px rgba(5, 102, 95, 0.35) !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700 !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.dropdown-trigger-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(5, 102, 95, 0.5) !important;
+  border-color: #ffffff !important;
+}
+
+.dropdown-caret {
+  font-size: 11px;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-wrap.active .dropdown-caret {
+  transform: rotate(180deg);
+}
+
+.reports-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 330px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.22);
+  z-index: 1000;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-section-header {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 6px 10px 4px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-client-name {
+  color: var(--bvx-primary);
+  font-weight: 800;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.dropdown-item:hover {
+  background: #f1f5f9;
+}
+
+.dropdown-item-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+
+.dropdown-item-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-item-title {
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.dropdown-item-desc {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.25;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 6px 4px;
+}
+
+/* Botão elegante sob a nota do cliente na Ficha 360 */
+.btn-client-reports {
+  margin-top: 10px;
+  background: #f8fafc;
+  color: var(--bvx-primary);
+  border: 1.5px solid var(--bvx-teal);
+  font-family: var(--font-title);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.btn-client-reports:hover {
+  background: var(--bvx-primary);
+  color: #ffffff;
+  border-color: var(--bvx-primary);
+  transform: translateY(-1px);
 }
 
 .live-telemetry {
@@ -1566,6 +1718,45 @@ body {
 
 .ods-footer-note {
   color: #94a3b8;
+}
+
+.footer-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ods-footer-pill {
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.footer-api-link {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #94a3b8;
+  font-size: 11px;
+  font-family: var(--font-title);
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.footer-api-link:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* ==================== ANIMAÇÕES ==================== */

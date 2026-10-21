@@ -248,6 +248,12 @@ function selecionarCliente(cliente) {
   document.getElementById('empty-detail-state').style.display = 'none';
   document.getElementById('client-detail-content').style.display = 'block';
 
+  // Atualiza indicador de cliente selecionado no menu de relatórios
+  const dropdownIndicator = document.getElementById('dropdown-client-indicator');
+  if (dropdownIndicator) {
+    dropdownIndicator.innerText = cliente.nome_fantasia;
+  }
+
   // Cabeçalho do Detalhe
   document.getElementById('detail-pdv-code').innerText = cliente.codigo_pdv;
   document.getElementById('detail-city-tag').innerText = `${cliente.cidade} - ${cliente.uf}`;
@@ -575,6 +581,95 @@ function configurarEventos() {
   if (btnPrintExtremos) {
     btnPrintExtremos.addEventListener('click', () => {
       window.print();
+    });
+  }
+
+  // Dropdown Central de Relatórios & Ações
+  const dropdownWrap = document.getElementById('reports-dropdown-wrap');
+  const btnToggleReports = document.getElementById('btn-toggle-reports-menu');
+  const reportsMenu = document.getElementById('reports-dropdown-menu');
+  const btnClientReports = document.getElementById('btn-client-reports');
+
+  function alternarMenuRelatorios(e) {
+    if (e) e.stopPropagation();
+    if (!reportsMenu) return;
+    const isVisible = reportsMenu.style.display === 'flex';
+    reportsMenu.style.display = isVisible ? 'none' : 'flex';
+    if (dropdownWrap) {
+      dropdownWrap.classList.toggle('active', !isVisible);
+    }
+  }
+
+  function fecharMenuRelatorios() {
+    if (reportsMenu) reportsMenu.style.display = 'none';
+    if (dropdownWrap) dropdownWrap.classList.remove('active');
+  }
+
+  if (btnToggleReports) {
+    btnToggleReports.addEventListener('click', alternarMenuRelatorios);
+  }
+
+  if (btnClientReports) {
+    btnClientReports.addEventListener('click', (e) => {
+      alternarMenuRelatorios(e);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // Fechar dropdown ao clicar fora
+  document.addEventListener('click', (e) => {
+    if (dropdownWrap && !dropdownWrap.contains(e.target)) {
+      fecharMenuRelatorios();
+    }
+  });
+
+  // Ações dos Itens do Dropdown
+  const itemDossie = document.getElementById('menu-item-dossie');
+  if (itemDossie) {
+    itemDossie.addEventListener('click', () => {
+      fecharMenuRelatorios();
+      abrirModalDossie();
+    });
+  }
+
+  const itemExtremos = document.getElementById('menu-item-extremos');
+  if (itemExtremos) {
+    itemExtremos.addEventListener('click', () => {
+      fecharMenuRelatorios();
+      abrirModalExtremos();
+    });
+  }
+
+  const itemPerdas = document.getElementById('menu-item-perdas');
+  if (itemPerdas) {
+    itemPerdas.addEventListener('click', () => {
+      fecharMenuRelatorios();
+      if (!selectedClient && allClients && allClients.length > 0) {
+        selecionarCliente(allClients[0]);
+      }
+      abrirModalGraficoPerdas();
+    });
+  }
+
+  const itemOS = document.getElementById('menu-item-os');
+  if (itemOS) {
+    itemOS.addEventListener('click', () => {
+      fecharMenuRelatorios();
+      if (!selectedClient && allClients && allClients.length > 0) {
+        selecionarCliente(allClients[0]);
+      }
+      abrirModalOS(selectedClient);
+    });
+  }
+
+  const itemLaudo = document.getElementById('menu-item-laudo');
+  if (itemLaudo) {
+    itemLaudo.addEventListener('click', () => {
+      fecharMenuRelatorios();
+      if (!selectedClient && allClients && allClients.length > 0) {
+        selecionarCliente(allClients[0]);
+      }
+      abrirModalLaudo(selectedClient);
     });
   }
 
