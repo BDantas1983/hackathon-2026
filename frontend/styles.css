@@ -441,7 +441,58 @@ body {
   color: #ffffff;
   box-shadow: 0 8px 25px rgba(5, 102, 95, 0.2);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+}
+
+.bvx-hero-actions .dropdown-wrap {
+  position: relative;
+  z-index: 50;
+}
+
+.bvx-hero-actions .btn-bvx-corp.dropdown-trigger-btn {
+  background: #ffffff !important;
+  color: var(--bvx-primary) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16) !important;
+  font-size: 13.5px !important;
+  padding: 12px 24px !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bvx-hero-actions .btn-bvx-corp.dropdown-trigger-btn:hover {
+  background: var(--bvx-mint-bg) !important;
+  color: var(--bvx-primary) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22) !important;
+}
+
+.bvx-hero-actions .reports-dropdown-menu {
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 1050;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.status-chip.bvx-portal-chip {
+  background: rgba(0, 141, 133, 0.45);
+  border: 1px solid rgba(128, 208, 199, 0.5);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 700 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-chip.bvx-portal-chip:hover {
+  background: var(--bvx-primary);
+  border-color: #ffffff;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 141, 133, 0.45);
 }
 
 .bvx-hero-banner::after {

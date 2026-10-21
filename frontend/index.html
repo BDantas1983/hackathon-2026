@@ -42,64 +42,11 @@
           <span>Telemetria & IA Ativas</span>
         </div>
 
-        <!-- DROPDOWN CENTRAL DE RELATÓRIOS & AÇÕES -->
-        <div class="dropdown-wrap" id="reports-dropdown-wrap">
-          <button class="status-chip dropdown-trigger-btn" id="btn-toggle-reports-menu" title="Acessar Central de Relatórios e Ações">
-            <span>📑</span>
-            <span>Relatórios & Ações</span>
-            <span class="dropdown-caret">▾</span>
-          </button>
-          
-          <div class="reports-dropdown-menu" id="reports-dropdown-menu" style="display: none;">
-            
-            <!-- Bloco 1: Gestão Geral da Carteira -->
-            <div class="dropdown-section-header">VISÃO DA CARTEIRA</div>
-            <button class="dropdown-item" id="menu-item-dossie">
-              <span class="dropdown-item-icon">📑</span>
-              <div class="dropdown-item-info">
-                <div class="dropdown-item-title">Dossiê Executivo da Diretoria</div>
-                <div class="dropdown-item-desc">Visão macro, R$ sob risco e plano diretor</div>
-              </div>
-            </button>
-            <button class="dropdown-item" id="menu-item-extremos">
-              <span class="dropdown-item-icon">📊</span>
-              <div class="dropdown-item-info">
-                <div class="dropdown-item-title">Análise de Extremos (Top 10)</div>
-                <div class="dropdown-item-desc">Casos extremos e risco de valência técnica</div>
-              </div>
-            </button>
-
-            <div class="dropdown-divider"></div>
-
-            <!-- Bloco 2: Ações do Cliente Selecionado -->
-            <div class="dropdown-section-header">
-              <span>CLIENTE SELECIONADO:</span>
-              <strong id="dropdown-client-indicator" class="dropdown-client-name">Nenhum selecionado</strong>
-            </div>
-            <button class="dropdown-item item-client-action" id="menu-item-perdas">
-              <span class="dropdown-item-icon">📈</span>
-              <div class="dropdown-item-info">
-                <div class="dropdown-item-title">Gráfico de Perdas de Saúde</div>
-                <div class="dropdown-item-desc">Decomposição das penalidades (Base 100)</div>
-              </div>
-            </button>
-            <button class="dropdown-item item-client-action" id="menu-item-os">
-              <span class="dropdown-item-icon">🛠️</span>
-              <div class="dropdown-item-info">
-                <div class="dropdown-item-title">Ordem de Serviço Preventiva (O.S.)</div>
-                <div class="dropdown-item-desc">Documento técnico A4 para visita de campo</div>
-              </div>
-            </button>
-            <button class="dropdown-item item-client-action" id="menu-item-laudo">
-              <span class="dropdown-item-icon">📋</span>
-              <div class="dropdown-item-info">
-                <div class="dropdown-item-title">Laudo Técnico de Conformidade</div>
-                <div class="dropdown-item-desc">Parecer consultivo A4 para o comerciante</div>
-              </div>
-            </button>
-
-          </div>
-        </div>
+        <!-- LINK PARA O PORTAL OFICIAL BVX NO CABEÇALHO -->
+        <a href="https://bvxtecnologia.com.br/" target="_blank" rel="noopener noreferrer" class="status-chip bvx-portal-chip" title="Visitar Portal Oficial BVX Tecnologia">
+          <span>Visitar Portal Oficial BVX</span>
+          <span class="btn-arrow">↗</span>
+        </a>
       </div>
     </div>
   </header>
@@ -116,10 +63,64 @@
           <p class="bvx-hero-desc">Monitoramento inteligente de telemetria, prevenção de cancelamentos (churn) e acompanhamento preditivo de saúde da carteira.</p>
         </div>
         <div class="bvx-hero-actions">
-          <a href="https://bvxtecnologia.com.br/" target="_blank" rel="noopener noreferrer" class="btn-bvx-corp">
-            <span>Visitar Portal Oficial BVX</span>
-            <span class="btn-arrow">↗</span>
-          </a>
+          <!-- DROPDOWN CENTRAL DE RELATÓRIOS & AÇÕES NO BANNER BVX -->
+          <div class="dropdown-wrap" id="reports-dropdown-wrap">
+            <button class="btn-bvx-corp dropdown-trigger-btn" id="btn-toggle-reports-menu" title="Acessar Central de Relatórios e Ações">
+              <span>📑</span>
+              <span>Relatórios & Ações</span>
+              <span class="dropdown-caret">▾</span>
+            </button>
+            
+            <div class="reports-dropdown-menu" id="reports-dropdown-menu" style="display: none;">
+              
+              <!-- Bloco 1: Gestão Geral da Carteira -->
+              <div class="dropdown-section-header">VISÃO DA CARTEIRA</div>
+              <button class="dropdown-item" id="menu-item-dossie">
+                <span class="dropdown-item-icon">📑</span>
+                <div class="dropdown-item-info">
+                  <div class="dropdown-item-title">Dossiê Executivo da Diretoria</div>
+                  <div class="dropdown-item-desc">Visão macro, R$ sob risco e plano diretor</div>
+                </div>
+              </button>
+              <button class="dropdown-item" id="menu-item-extremos">
+                <span class="dropdown-item-icon">📊</span>
+                <div class="dropdown-item-info">
+                  <div class="dropdown-item-title">Análise de Extremos (Top 10)</div>
+                  <div class="dropdown-item-desc">Casos extremos e risco de valência técnica</div>
+                </div>
+              </button>
+
+              <div class="dropdown-divider"></div>
+
+              <!-- Bloco 2: Ações do Cliente Selecionado -->
+              <div class="dropdown-section-header">
+                <span>CLIENTE SELECIONADO:</span>
+                <strong id="dropdown-client-indicator" class="dropdown-client-name">Nenhum selecionado</strong>
+              </div>
+              <button class="dropdown-item item-client-action" id="menu-item-perdas">
+                <span class="dropdown-item-icon">📈</span>
+                <div class="dropdown-item-info">
+                  <div class="dropdown-item-title">Gráfico de Perdas de Saúde</div>
+                  <div class="dropdown-item-desc">Decomposição das penalidades (Base 100)</div>
+                </div>
+              </button>
+              <button class="dropdown-item item-client-action" id="menu-item-os">
+                <span class="dropdown-item-icon">🛠️</span>
+                <div class="dropdown-item-info">
+                  <div class="dropdown-item-title">Ordem de Serviço Preventiva (O.S.)</div>
+                  <div class="dropdown-item-desc">Documento técnico A4 para visita de campo</div>
+                </div>
+              </button>
+              <button class="dropdown-item item-client-action" id="menu-item-laudo">
+                <span class="dropdown-item-icon">📋</span>
+                <div class="dropdown-item-info">
+                  <div class="dropdown-item-title">Laudo Técnico de Conformidade</div>
+                  <div class="dropdown-item-desc">Parecer consultivo A4 para o comerciante</div>
+                </div>
+              </button>
+
+            </div>
+          </div>
         </div>
       </div>
     </section>
