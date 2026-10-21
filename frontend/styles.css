@@ -1226,6 +1226,31 @@ body {
   border-radius: var(--radius-lg);
   padding: 20px;
   margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+@keyframes simPulseHighlight {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 141, 133, 0.7);
+    border-color: #008d85;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 24px 6px rgba(0, 141, 133, 0.45);
+    border-color: #05665f;
+    transform: scale(1.015);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 141, 133, 0);
+    border-color: #99f6e4;
+    transform: scale(1);
+  }
+}
+
+.sim-box-highlight {
+  animation: simPulseHighlight 2s ease-in-out;
+  border-width: 2px !important;
+  border-color: #008d85 !important;
 }
 
 .simulator-header {
@@ -3444,6 +3469,36 @@ body {
 .insight-icon {
   font-size: 20px;
   flex-shrink: 0;
+}
+
+/* Simulação Ativa de Recuperação dentro do Modal */
+.modal-sim-toggle {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.modal-sim-toggle:hover {
+  border-color: #008d85 !important;
+  background: #f0fdfa !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 141, 133, 0.12);
+}
+
+.modal-sim-toggle input[type="checkbox"]:checked + div strong {
+  color: #05665f !important;
+}
+
+.sim-score-comparison-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .sim-score-comparison-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }
 
 /* Regras de Impressão (O.S., Laudo ou Dossiê) */

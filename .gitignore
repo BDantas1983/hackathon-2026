@@ -28,3 +28,10 @@ pip-delete-this-directory.txt
 # OS
 Thumbs.db
 .DS_Store
+
+# Relatórios locais e PDFs
+*.pdf
+relatorio_completo*
+entregaveis*
+generate_pdf_report.py
+generate_deliverables_pdf.py

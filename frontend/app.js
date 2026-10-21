@@ -6,31 +6,51 @@
 // URL pública padrão do Backend no Render
 const RENDER_PROD_URL = 'https://hackathon-2026-6ni3.onrender.com';
 
-// Detecta a URL base da API (suporte a localhost, Vercel e Render)
+// Detecta a URL base da API (suporte a localhost:8000, Live Server porta 5500, Vercel e Render)
 function obterApiBase() {
-  const isLocal = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
-  const isRender = window.location.origin.includes('onrender.com');
-  if (isLocal || isRender) {
-    return '';
-  }
   const salva = localStorage.getItem('BVX_RENDER_API');
   if (salva) {
     return salva.replace(/\/$/, '');
   }
+
+  const origin = window.location.origin || '';
+  const port = window.location.port;
+  const isRender = origin.includes('onrender.com');
+
+  if (isRender) {
+    return '';
+  }
+
+  // Se estiver rodando exatamente na porta 8000 do FastAPI local
+  if (port === '8000') {
+    return '';
+  }
+
+  // Se estiver rodando em outra porta local (ex: Live Server 5500, Vite 5173, etc.)
+  const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+  if (isLocal) {
+    return 'http://localhost:8000';
+  }
+
+  // Se for ambiente remoto ou file://
   return RENDER_PROD_URL;
 }
 
 let API_BASE = obterApiBase();
 
-function atualizarStatusConexaoApi() {
+function atualizarStatusConexaoApi(customMsg) {
   const label = document.getElementById('api-status-label');
   if (!label) return;
-  const isLocal = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1');
-  const isRender = window.location.origin.includes('onrender.com');
+  if (customMsg) {
+    label.innerText = customMsg;
+    return;
+  }
+  const isLocal = API_BASE.includes('localhost') || API_BASE.includes('127.0.0.1') || (!API_BASE && window.location.port === '8000');
+  const isRender = API_BASE.includes('onrender.com') || window.location.origin.includes('onrender.com');
   if (isLocal) {
     label.innerText = 'API Local (8000)';
   } else if (isRender) {
-    label.innerText = 'Render Ativo';
+    label.innerText = 'Render Conectado';
   } else {
     label.innerText = 'Render Conectado';
   }
@@ -147,7 +167,45 @@ async function carregarClientes() {
       selecionarCliente(allClients[0]);
     }
   } catch (err) {
-    console.error('Falha ao carregar clientes:', err);
+    console.error('Falha ao carregar clientes via ' + API_BASE, err);
+    // Se falhou tentando conectar localmente, tenta automaticamente o Render
+    if (API_BASE !== RENDER_PROD_URL) {
+      console.warn('Tentando fallback automático para o Render:', RENDER_PROD_URL);
+      try {
+        API_BASE = RENDER_PROD_URL;
+        atualizarStatusConexaoApi('Render Conectado (Fallback)');
+        const resRender = await fetch(`${API_BASE}/api/clients`);
+        if (resRender.ok) {
+          allClients = await resRender.json();
+          renderizarListaClientes();
+          if (allClients.length > 0 && !selectedClient) {
+            selecionarCliente(allClients[0]);
+          }
+          carregarEstatisticas();
+          carregarAlertas();
+          return;
+        }
+      } catch (renderErr) {
+        console.error('Falha também no Render:', renderErr);
+      }
+    }
+
+    const container = document.getElementById('clients-list');
+    if (container) {
+      container.innerHTML = `
+        <div style="text-align:center; padding: 30px 15px; color: var(--color-danger);">
+          <div style="font-size: 26px; margin-bottom: 8px;">⚠️</div>
+          <div style="font-weight: 700; margin-bottom: 6px;">Não foi possível carregar os dados</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+            A aplicação tentou conectar em <code>${API_BASE}</code>.<br>
+            Verifique se o backend FastAPI está ativo na porta 8000 ou conecte-se ao servidor na nuvem.
+          </div>
+          <button onclick="abrirConfigApi()" class="btn-primary-action" style="padding: 6px 14px; font-size: 12px; margin: 0 auto; display: inline-flex;">
+            ⚙️ Configurar URL da API
+          </button>
+        </div>
+      `;
+    }
   }
 }
 
@@ -373,7 +431,42 @@ async function executarSimulacao() {
     }
 
   } catch (err) {
-    console.error('Falha ao simular impacto:', err);
+    console.warn('Falha na API remota de simulação, calculando com motor local BVX:', err);
+    // Fallback motor local BVX (Base 100 ponderada: 30% Backup, 25% Versão, 25% Vendas, 20% Chamados)
+    const c = selectedClient;
+    const sub = c.detalhe_subscores || { backup: 50, versao: 50, vendas: 50, chamados: 50 };
+
+    const ptsBackup = simBackup ? 100 * 0.30 : (sub.backup || 0) * 0.30;
+    const ptsVersao = simVersao ? 100 * 0.25 : (sub.versao || 0) * 0.25;
+    const ptsVendas = (sub.vendas || 0) * 0.25;
+    const ptsChamados = simChamados ? Math.min(100, (sub.chamados || 50) + 40) * 0.20 : (sub.chamados || 0) * 0.20;
+
+    const scoreOrig = c.health_score || 0;
+    const scoreSim = Math.min(100, Math.round(ptsBackup + ptsVersao + ptsVendas + ptsChamados));
+    const ganho = Math.max(0, scoreSim - scoreOrig);
+
+    const riscoOrig = c.risco || (scoreOrig < 50 ? 'ALTO RISCO' : scoreOrig < 75 ? 'ATENÇÃO' : 'BAIXO RISCO');
+    const riscoSim = scoreSim < 50 ? 'ALTO RISCO' : scoreSim < 75 ? 'ATENÇÃO' : 'BAIXO RISCO';
+
+    const elCurrent = document.getElementById('sim-current-score');
+    const elProjected = document.getElementById('sim-projected-score');
+    const elDiff = document.getElementById('sim-diff-badge');
+    const elFeedback = document.getElementById('sim-feedback-text');
+
+    if (elCurrent) elCurrent.innerText = scoreOrig;
+    if (elProjected) elProjected.innerText = scoreSim;
+    if (elDiff) elDiff.innerText = `+${ganho} pts`;
+
+    if (elFeedback) {
+      if (ganho > 0) {
+        elFeedback.innerHTML = `
+          Com essas ações preventivas, o cliente evolui de <strong>${riscoOrig}</strong> para 
+          <strong style="color:var(--color-success);">${riscoSim}</strong>, reduzindo o risco de churn!
+        `;
+      } else {
+        elFeedback.innerText = 'Nenhuma intervenção selecionada no momento.';
+      }
+    }
   }
 }
 
@@ -731,16 +824,50 @@ function configurarEventos() {
     });
   }
 
+  // Abas e Botões do Modal de Perdas & Simulação
+  const tabPerdasAnalise = document.getElementById('tab-btn-perdas-analise');
+  const tabPerdasSimulacao = document.getElementById('tab-btn-perdas-simulacao');
+  if (tabPerdasAnalise) tabPerdasAnalise.addEventListener('click', () => alternarAbasPerdas('analise'));
+  if (tabPerdasSimulacao) tabPerdasSimulacao.addEventListener('click', () => alternarAbasPerdas('simulacao'));
+
   const btnSimularPerdas = document.getElementById('modal-perdas-simular-btn');
   if (btnSimularPerdas) {
-    btnSimularPerdas.addEventListener('click', () => {
-      fecharModalGraficoPerdas();
-      const simSection = document.querySelector('.simulator-card');
-      if (simSection) {
-        simSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+    btnSimularPerdas.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Alterna diretamente para a aba de simulação dentro do modal (não volta pra tela inicial)
+      alternarAbasPerdas('simulacao');
     });
   }
+
+  const btnSimVoltar = document.getElementById('modal-sim-btn-voltar');
+  if (btnSimVoltar) btnSimVoltar.addEventListener('click', () => alternarAbasPerdas('analise'));
+
+  const btnSimOS = document.getElementById('modal-sim-btn-os');
+  if (btnSimOS) {
+    btnSimOS.addEventListener('click', () => {
+      fecharModalGraficoPerdas();
+      if (selectedClient) abrirModalOS(selectedClient);
+    });
+  }
+
+  const btnSimLaudo = document.getElementById('modal-sim-btn-laudo');
+  if (btnSimLaudo) {
+    btnSimLaudo.addEventListener('click', () => {
+      fecharModalGraficoPerdas();
+      if (selectedClient) abrirModalLaudo(selectedClient);
+    });
+  }
+
+  const btnSimCloseBottom = document.getElementById('modal-sim-close-bottom-btn');
+  if (btnSimCloseBottom) btnSimCloseBottom.addEventListener('click', fecharModalGraficoPerdas);
+
+  // Checkboxes interativos do Modal de Simulação
+  const mCheckBackup = document.getElementById('modal-sim-check-backup');
+  const mCheckVersion = document.getElementById('modal-sim-check-version');
+  const mCheckTickets = document.getElementById('modal-sim-check-tickets');
+  if (mCheckBackup) mCheckBackup.addEventListener('change', executarSimulacaoModal);
+  if (mCheckVersion) mCheckVersion.addEventListener('change', executarSimulacaoModal);
+  if (mCheckTickets) mCheckTickets.addEventListener('change', executarSimulacaoModal);
 
   // Abas do Modal de Extremos
   const tabInterativo = document.getElementById('tab-btn-interativo');
@@ -1454,7 +1581,7 @@ function abrirModalGraficoPerdas() {
   const perdaVendas = Math.max(0, +(25 - ptsVendas).toFixed(1));
   const perdaChamados = Math.max(0, +(20 - ptsChamados).toFixed(1));
 
-  // Preenche dados do cliente
+  // Preenche dados do cliente no cabeçalho do diagnóstico
   document.getElementById('perdas-pdv-badge').innerText = c.codigo_pdv || 'PDV-0000';
   document.getElementById('perdas-client-name').innerText = c.nome_fantasia || 'Cliente';
   document.getElementById('perdas-score-val').innerText = `${c.health_score} / 100`;
@@ -1493,6 +1620,19 @@ function abrirModalGraficoPerdas() {
 
   const maiorPerda = perdasArray[0];
   document.getElementById('perdas-insight-text').innerHTML = `O maior gargalo de saúde deste cliente é <strong>${maiorPerda.nome}</strong> (penalidade de <strong>${maiorPerda.perda} pontos</strong>). Ação recomendada: <strong>${maiorPerda.acao}</strong>.`;
+
+  // Pré-configura os checkboxes de simulação com base nos gargalos do cliente
+  const mCheckBackup = document.getElementById('modal-sim-check-backup');
+  const mCheckVersion = document.getElementById('modal-sim-check-version');
+  const mCheckTickets = document.getElementById('modal-sim-check-tickets');
+  if (mCheckBackup) mCheckBackup.checked = (c.dias_sem_backup >= 1 || !c.backup_integro || (sub.backup !== undefined && sub.backup < 90));
+  if (mCheckVersion) mCheckVersion.checked = (!c.versao_sistema || !c.versao_sistema.startsWith('5.4') || (sub.versao !== undefined && sub.versao < 90));
+  if (mCheckTickets) mCheckTickets.checked = (c.chamados_ultimos_30d > 0 || (sub.chamados !== undefined && sub.chamados < 90));
+
+  if (mCheckBackup && mCheckVersion && !mCheckBackup.checked && !mCheckVersion.checked && (!mCheckTickets || !mCheckTickets.checked)) {
+    mCheckBackup.checked = true;
+    mCheckVersion.checked = true;
+  }
 
   // Renderização do Gráfico de Pizza no Canvas (Chart.js)
   const canvas = document.getElementById('chart-perdas-pie');
@@ -1555,12 +1695,189 @@ function abrirModalGraficoPerdas() {
     });
   }
 
+  // Abre sempre na aba de diagnóstico inicial
+  alternarAbasPerdas('analise');
   modal.style.display = 'flex';
 }
 
 function fecharModalGraficoPerdas() {
   const modal = document.getElementById('modal-grafico-perdas');
   if (modal) modal.style.display = 'none';
+}
+
+// ==================== ABAS DO MODAL DE PERDAS & SIMULAÇÃO ====================
+let chartRecuperacaoInstance = null;
+
+function alternarAbasPerdas(aba) {
+  const tabAnalise = document.getElementById('tab-btn-perdas-analise');
+  const tabSimulacao = document.getElementById('tab-btn-perdas-simulacao');
+  const viewAnalise = document.getElementById('view-perdas-analise');
+  const viewSimulacao = document.getElementById('view-perdas-simulacao');
+  const footerAnalise = document.getElementById('modal-perdas-footer-analise');
+  const footerSimulacao = document.getElementById('modal-perdas-footer-simulacao');
+  const title = document.getElementById('modal-perdas-main-title');
+
+  if (aba === 'simulacao') {
+    if (tabAnalise) tabAnalise.classList.remove('active');
+    if (tabSimulacao) tabSimulacao.classList.add('active');
+    if (viewAnalise) viewAnalise.style.display = 'none';
+    if (viewSimulacao) viewSimulacao.style.display = 'block';
+    if (footerAnalise) footerAnalise.style.display = 'none';
+    if (footerSimulacao) footerSimulacao.style.display = 'flex';
+    if (title) title.innerText = 'Simulação Ativa de Recuperação do Health Score';
+    executarSimulacaoModal();
+  } else {
+    if (tabAnalise) tabAnalise.classList.add('active');
+    if (tabSimulacao) tabSimulacao.classList.remove('active');
+    if (viewAnalise) viewAnalise.style.display = 'block';
+    if (viewSimulacao) viewSimulacao.style.display = 'none';
+    if (footerAnalise) footerAnalise.style.display = 'flex';
+    if (footerSimulacao) footerSimulacao.style.display = 'none';
+    if (title) title.innerText = 'Decomposição de Perdas & Simulação de Recuperação';
+  }
+}
+
+function executarSimulacaoModal() {
+  if (!selectedClient) return;
+  const c = selectedClient;
+
+  // Preenche dados do cliente
+  const pdvBadge = document.getElementById('modal-sim-pdv-badge');
+  const clientName = document.getElementById('modal-sim-client-name');
+  if (pdvBadge) pdvBadge.innerText = c.codigo_pdv || 'PDV-0000';
+  if (clientName) clientName.innerText = c.nome_fantasia || 'Cliente';
+
+  // Checkboxes do Modal
+  const simBackup = document.getElementById('modal-sim-check-backup')?.checked ?? true;
+  const simVersao = document.getElementById('modal-sim-check-version')?.checked ?? true;
+  const simChamados = document.getElementById('modal-sim-check-tickets')?.checked ?? true;
+
+  // Sincroniza com a caixa de simulação da página principal
+  const bgBackup = document.getElementById('sim-check-backup');
+  const bgVersao = document.getElementById('sim-check-version');
+  const bgChamados = document.getElementById('sim-check-tickets');
+  if (bgBackup) bgBackup.checked = simBackup;
+  if (bgVersao) bgVersao.checked = simVersao;
+  if (bgChamados) bgChamados.checked = simChamados;
+
+  const sub = c.detalhe_subscores || { backup: 50, versao: 50, vendas: 50, chamados: 50 };
+
+  // Cálculo de pesos da BVX (Base 100)
+  const ptsBackupOrig = ((sub.backup || 0) * 0.30);
+  const ptsBackupSim = simBackup ? 30 : ptsBackupOrig;
+
+  const ptsVersaoOrig = ((sub.versao || 0) * 0.25);
+  const ptsVersaoSim = simVersao ? 25 : ptsVersaoOrig;
+
+  const ptsVendas = Math.min(25, +((sub.vendas || 0) * 0.25).toFixed(1));
+
+  const ptsChamadosOrig = ((sub.chamados || 0) * 0.20);
+  const ptsChamadosSim = simChamados ? Math.min(20, ptsChamadosOrig + 10) : ptsChamadosOrig;
+
+  // Scores
+  const scoreOrig = c.health_score || 0;
+  const scoreSimulado = Math.min(100, Math.round(ptsBackupSim + ptsVersaoSim + ptsVendas + ptsChamadosSim));
+  const ganhoTotal = Math.max(0, scoreSimulado - scoreOrig);
+
+  // Risco
+  const riscoOrig = c.risco || (scoreOrig < 50 ? 'ALTO RISCO' : scoreOrig < 75 ? 'ATENÇÃO' : 'BAIXO RISCO');
+  const riscoSimulado = scoreSimulado < 50 ? 'ALTO RISCO' : (scoreSimulado < 75 ? 'ATENÇÃO' : 'BAIXO RISCO');
+  const corRiscoSimulado = scoreSimulado < 50 ? '#dc2626' : (scoreSimulado < 75 ? '#d97706' : '#16a34a');
+
+  // Atualização dos elementos no Modal
+  const elOrigVal = document.getElementById('modal-sim-orig-val');
+  const elOrigRisk = document.getElementById('modal-sim-orig-risk');
+  const elProjVal = document.getElementById('modal-sim-proj-val');
+  const elProjRisk = document.getElementById('modal-sim-proj-risk');
+  const elGainBadge = document.getElementById('modal-sim-gain-badge');
+
+  if (elOrigVal) elOrigVal.innerText = `${scoreOrig} / 100`;
+  if (elOrigRisk) elOrigRisk.innerText = riscoOrig;
+  if (elProjVal) elProjVal.innerText = `${scoreSimulado} / 100`;
+  if (elProjRisk) {
+    elProjRisk.innerText = riscoSimulado;
+    elProjRisk.style.background = corRiscoSimulado;
+  }
+  if (elGainBadge) elGainBadge.innerText = `+${ganhoTotal} pts recuperados`;
+
+  // Insight Preditivo dinâmico
+  const insightEl = document.getElementById('modal-sim-insight-text');
+  if (insightEl) {
+    if (ganhoTotal > 0) {
+      insightEl.innerHTML = `Com as intervenções proativas selecionadas, o cliente evolui de <strong>${scoreOrig}</strong> para <strong>${scoreSimulado} pontos</strong> (mudança de faixa para <strong style="color:${corRiscoSimulado}">${riscoSimulado}</strong>). O risco de cancelamento/churn é contornado com sucesso!`;
+    } else {
+      insightEl.innerText = 'Selecione uma ou mais intervenções acima para calcular o impacto da recuperação.';
+    }
+  }
+
+  // Gráfico de Pizza de Recuperação no Canvas
+  const canvas = document.getElementById('chart-recuperacao-pie');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    if (chartRecuperacaoInstance) {
+      chartRecuperacaoInstance.destroy();
+    }
+
+    const perdaResidualBackup = Math.max(0, +(30 - ptsBackupSim).toFixed(1));
+    const perdaResidualVersao = Math.max(0, +(25 - ptsVersaoSim).toFixed(1));
+    const perdaResidualVendas = Math.max(0, +(25 - ptsVendas).toFixed(1));
+    const perdaResidualChamados = Math.max(0, +(20 - ptsChamadosSim).toFixed(1));
+
+    chartRecuperacaoInstance = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: [
+          'Saúde Preservada & Recuperada',
+          'Perda Residual de Backup',
+          'Perda Residual de Versão',
+          'Perda por Queda de Vendas',
+          'Perda Residual de Chamados'
+        ],
+        datasets: [{
+          data: [scoreSimulado, perdaResidualBackup, perdaResidualVersao, perdaResidualVendas, perdaResidualChamados],
+          backgroundColor: [
+            '#059669', // Verde Esmeralda (Recuperado)
+            '#f87171', // Perda Backup
+            '#fbbf24', // Perda Versão
+            '#e76f51', // Perda Vendas
+            '#94a3b8'  // Perda Chamados
+          ],
+          borderWidth: 2,
+          borderColor: '#ffffff',
+          hoverOffset: 12
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          animateScale: true,
+          animateRotate: true
+        },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              font: { family: 'Open Sans', size: 10.5, weight: '600' },
+              boxWidth: 12,
+              padding: 8
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const val = context.raw || 0;
+                return ` ${context.label}: ${val} pts`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Sincroniza a simulação na coluna da página principal em background
+  executarSimulacao();
 }
 
 

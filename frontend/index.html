@@ -1043,113 +1043,222 @@
     </div>
   </div>
 
-  <!-- MODAL GRÁFICO DE DECOMPOSIÇÃO DE PERDAS DE SAÚDE (INSPIRAÇÃO COLAB) -->
+  <!-- MODAL GRÁFICO DE DECOMPOSIÇÃO DE PERDAS & SIMULAÇÃO ATIVA DE RECUPERAÇÃO -->
   <div class="modal-backdrop" id="modal-grafico-perdas" style="display: none;">
     <div class="modal-card modal-perdas-card">
       <div class="modal-header">
         <div class="modal-title-group">
           <span class="modal-icon">📊</span>
           <div>
-            <h3 class="modal-title">Decomposição & Distribuição de Perdas de Saúde</h3>
-            <p class="modal-subtitle">Análise das causas de perda do Health Score (Base 100) • Modelo Preditivo BVX</p>
+            <h3 class="modal-title" id="modal-perdas-main-title">Decomposição de Perdas & Simulação de Recuperação</h3>
+            <p class="modal-subtitle">Análise das causas de perda do Health Score e Projeção de Recuperação • Modelo Preditivo BVX</p>
           </div>
         </div>
         <button class="modal-close-btn" id="modal-perdas-close-btn">&times;</button>
       </div>
 
-      <div class="modal-body modal-perdas-body">
-        <!-- Cabeçalho do Gráfico com Identificação do Cliente -->
-        <div class="perdas-header-box">
-          <div class="perdas-client-info">
-            <span class="perdas-pdv-badge" id="perdas-pdv-badge">PDV-0000</span>
-            <h3 class="perdas-client-name" id="perdas-client-name">Nome do Estabelecimento</h3>
-            <p class="perdas-sub-label">Distribuição e Decomposição Ponderada de Fatores de Risco</p>
-          </div>
-          <div class="perdas-score-badge-box">
-            <span class="perdas-score-tag">Score Final</span>
-            <div class="perdas-score-val" id="perdas-score-val">0 / 100</div>
-            <span class="perdas-risk-tag" id="perdas-risk-tag">ALTO RISCO</span>
-          </div>
-        </div>
-
-        <!-- Grid com o Gráfico e o Quadro de Penalidades -->
-        <div class="perdas-grid">
-          <!-- Canvas do Gráfico de Pizza (Chart.js) -->
-          <div class="perdas-chart-container">
-            <canvas id="chart-perdas-pie"></canvas>
-          </div>
-
-          <!-- Quadro com os 5 Fatores de Saúde e Perdas -->
-          <div class="perdas-factors-list">
-            <h4 class="perdas-factors-title">Detalhamento dos Fatores Ponderados</h4>
-            
-            <div class="perda-factor-item factor-restante">
-              <div class="factor-header">
-                <span class="factor-color-dot" style="background: #2a9d8f;"></span>
-                <span class="factor-name">Pontuação Restante (Saúde Preservada)</span>
-                <span class="factor-val" id="factor-restante-val">+0.0 pts</span>
-              </div>
-              <div class="factor-bar-bg"><div class="factor-bar-fill" id="bar-restante" style="width: 0%; background: #2a9d8f;"></div></div>
-              <span class="factor-desc">Capacidade operacional saudável atual do cliente.</span>
-            </div>
-
-            <div class="perda-factor-item factor-backup">
-              <div class="factor-header">
-                <span class="factor-color-dot" style="background: #e63946;"></span>
-                <span class="factor-name">Perda por Backup (Risco)</span>
-                <span class="factor-val val-loss" id="factor-backup-val">-0.0 pts</span>
-              </div>
-              <div class="factor-bar-bg"><div class="factor-bar-fill" id="bar-backup" style="width: 0%; background: #e63946;"></div></div>
-              <span class="factor-desc" id="factor-backup-desc">Dias sem envio de cópia de segurança à nuvem.</span>
-            </div>
-
-            <div class="perda-factor-item factor-versao">
-              <div class="factor-header">
-                <span class="factor-color-dot" style="background: #f4a261;"></span>
-                <span class="factor-name">Perda por Versão Desatualizada</span>
-                <span class="factor-val val-loss" id="factor-versao-val">-0.0 pts</span>
-              </div>
-              <div class="factor-bar-bg"><div class="factor-bar-fill" id="bar-versao" style="width: 0%; background: #f4a261;"></div></div>
-              <span class="factor-desc" id="factor-versao-desc">Defasagem em relação à versão homologada 5.4.2.</span>
-            </div>
-
-            <div class="perda-factor-item factor-vendas">
-              <div class="factor-header">
-                <span class="factor-color-dot" style="background: #e76f51;"></span>
-                <span class="factor-name">Perda por Queda de Vendas</span>
-                <span class="factor-val val-loss" id="factor-vendas-val">-0.0 pts</span>
-              </div>
-              <div class="factor-bar-bg"><div class="factor-bar-fill" id="bar-vendas" style="width: 0%; background: #e76f51;"></div></div>
-              <span class="factor-desc" id="factor-vendas-desc">Oscilação comercial negativa e desuso do PDV.</span>
-            </div>
-
-            <div class="perda-factor-item factor-chamados">
-              <div class="factor-header">
-                <span class="factor-color-dot" style="background: #457b9d;"></span>
-                <span class="factor-name">Perda por Chamados / Suporte</span>
-                <span class="factor-val val-loss" id="factor-chamados-val">-0.0 pts</span>
-              </div>
-              <div class="factor-bar-bg"><div class="factor-bar-fill" id="bar-chamados" style="width: 0%; background: #457b9d;"></div></div>
-              <span class="factor-desc" id="factor-chamados-desc">Volume de tickets ou silêncio operacional arriscado.</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Caixa de Insight Preditivo da BVX -->
-        <div class="perdas-insight-box" id="perdas-insight-box">
-          <span class="insight-icon">💡</span>
-          <div class="insight-text">
-            <strong>Diagnóstico Preditivo de Recuperação:</strong>
-            <span id="perdas-insight-text">A maior vulnerabilidade deste cliente reside no atraso de backups. Uma intervenção técnica recupera imediatamente o índice.</span>
-          </div>
-        </div>
+      <!-- Abas de Navegação do Modal: Decomposição vs Simulação Ativa -->
+      <div class="extremos-tabs-nav perdas-tabs-nav">
+        <button class="extremos-tab-btn active" id="tab-btn-perdas-analise">
+          <span>📊</span> Diagnóstico de Perdas
+        </button>
+        <button class="extremos-tab-btn" id="tab-btn-perdas-simulacao">
+          <span>⚡</span> Simulação Ativa de Recuperação ("E se...?")
+        </button>
       </div>
 
-      <div class="modal-footer">
+      <div class="modal-body modal-perdas-body">
+        
+        <!-- VISÃO 1: DIAGNÓSTICO DE PERDAS ORIGINAL -->
+        <div class="perdas-tab-view" id="view-perdas-analise">
+          <!-- Cabeçalho do Gráfico com Identificação do Cliente -->
+          <div class="perdas-header-box">
+            <div class="perdas-client-info">
+              <span class="perdas-pdv-badge" id="perdas-pdv-badge">PDV-0000</span>
+              <h3 class="perdas-client-name" id="perdas-client-name">Nome do Estabelecimento</h3>
+              <p class="perdas-sub-label">Distribuição e Decomposição Ponderada de Fatores de Risco</p>
+            </div>
+            <div class="perdas-score-badge-box">
+              <span class="perdas-score-tag">Score Final</span>
+              <div class="perdas-score-val" id="perdas-score-val">0 / 100</div>
+              <span class="perdas-risk-tag" id="perdas-risk-tag">ALTO RISCO</span>
+            </div>
+          </div>
+
+          <!-- Grid com o Gráfico e o Quadro de Penalidades -->
+          <div class="perdas-grid">
+            <!-- Canvas do Gráfico de Pizza (Chart.js) -->
+            <div class="perdas-chart-container">
+              <canvas id="chart-perdas-pie"></canvas>
+            </div>
+
+            <!-- Quadro com os 5 Fatores de Saúde e Perdas -->
+            <div class="perdas-factors-list">
+              <h4 class="perdas-factors-title">Detalhamento dos Fatores Ponderados</h4>
+              
+              <div class="perda-factor-item factor-restante">
+                <div class="factor-header">
+                  <span class="factor-color-dot" style="background: #2a9d8f;"></span>
+                  <span class="factor-name">Pontuação Restante (Saúde Preservada)</span>
+                  <span class="factor-val" id="factor-restante-val">+0.0 pts</span>
+                </div>
+                <div class="factor-bar-bg"><div class="factor-bar-fill" id="bar-restante" style="width: 0%; background: #2a9d8f;"></div></div>
+                <span class="factor-desc">Capacidade operacional saudável atual do cliente.</span>
+              </div>
+
+              <div class="perda-factor-item factor-backup">
+                <div class="factor-header">
+                  <span class="factor-color-dot" style="background: #e63946;"></span>
+                  <span class="factor-name">Perda por Backup (Risco)</span>
+                  <span class="factor-val val-loss" id="factor-backup-val">-0.0 pts</span>
+                </div>
+                <div class="factor-bar-bg"><div class="factor-bar-fill" id="bar-backup" style="width: 0%; background: #e63946;"></div></div>
+                <span class="factor-desc" id="factor-backup-desc">Dias sem envio de cópia de segurança à nuvem.</span>
+              </div>
+
+              <div class="perda-factor-item factor-versao">
+                <div class="factor-header">
+                  <span class="factor-color-dot" style="background: #f4a261;"></span>
+                  <span class="factor-name">Perda por Versão Desatualizada</span>
+                  <span class="factor-val val-loss" id="factor-versao-val">-0.0 pts</span>
+                </div>
+                <div class="factor-bar-bg"><div class="factor-bar-fill" id="bar-versao" style="width: 0%; background: #f4a261;"></div></div>
+                <span class="factor-desc" id="factor-versao-desc">Defasagem em relação à versão homologada 5.4.2.</span>
+              </div>
+
+              <div class="perda-factor-item factor-vendas">
+                <div class="factor-header">
+                  <span class="factor-color-dot" style="background: #e76f51;"></span>
+                  <span class="factor-name">Perda por Queda de Vendas</span>
+                  <span class="factor-val val-loss" id="factor-vendas-val">-0.0 pts</span>
+                </div>
+                <div class="factor-bar-bg"><div class="factor-bar-fill" id="bar-vendas" style="width: 0%; background: #e76f51;"></div></div>
+                <span class="factor-desc" id="factor-vendas-desc">Oscilação comercial negativa e desuso do PDV.</span>
+              </div>
+
+              <div class="perda-factor-item factor-chamados">
+                <div class="factor-header">
+                  <span class="factor-color-dot" style="background: #457b9d;"></span>
+                  <span class="factor-name">Perda por Chamados / Suporte</span>
+                  <span class="factor-val val-loss" id="factor-chamados-val">-0.0 pts</span>
+                </div>
+                <div class="factor-bar-bg"><div class="factor-bar-fill" id="bar-chamados" style="width: 0%; background: #457b9d;"></div></div>
+                <span class="factor-desc" id="factor-chamados-desc">Volume de tickets ou silêncio operacional arriscado.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Caixa de Insight Preditivo da BVX -->
+          <div class="perdas-insight-box" id="perdas-insight-box">
+            <span class="insight-icon">💡</span>
+            <div class="insight-text">
+              <strong>Diagnóstico Preditivo de Recuperação:</strong>
+              <span id="perdas-insight-text">A maior vulnerabilidade deste cliente reside no atraso de backups. Uma intervenção técnica recupera imediatamente o índice.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISÃO 2: SIMULAÇÃO ATIVA DE RECUPERAÇÃO -->
+        <div class="perdas-tab-view" id="view-perdas-simulacao" style="display: none;">
+          <!-- Cabeçalho Comparativo: Score Original vs Score Simulado -->
+          <div class="perdas-header-box sim-header-box" style="background: linear-gradient(135deg, #f0fdfa 0%, #e6f4f2 100%); border-color: #99f6e4;">
+            <div class="perdas-client-info">
+              <span class="perdas-pdv-badge" id="modal-sim-pdv-badge">PDV-0000</span>
+              <h3 class="perdas-client-name" id="modal-sim-client-name">Nome do Estabelecimento</h3>
+              <p class="perdas-sub-label">Simulação em Tempo Real do Impacto das Ações Corretivas da BVX</p>
+            </div>
+            <div class="sim-score-comparison-row" style="display: flex; align-items: center; gap: 14px;">
+              <div style="text-align: right;">
+                <span style="font-size: 10px; color: #64748b; font-weight: 700; text-transform: uppercase;">Score Original</span>
+                <div id="modal-sim-orig-val" style="font-family: var(--font-title); font-size: 16px; font-weight: 800; color: #64748b;">0 / 100</div>
+                <span id="modal-sim-orig-risk" style="font-size: 10px; font-weight: 700; color: #dc2626;">ALTO RISCO</span>
+              </div>
+              <div style="font-size: 20px; color: #008d85; font-weight: 800;">➔</div>
+              <div style="text-align: right;">
+                <span style="font-size: 10px; color: #008d85; font-weight: 800; text-transform: uppercase;">Score Projetado</span>
+                <div id="modal-sim-proj-val" style="font-family: var(--font-title); font-size: 24px; font-weight: 900; color: #05665f;">0 / 100</div>
+                <span id="modal-sim-proj-risk" class="perdas-risk-tag" style="background: #10b981;">BAIXO RISCO</span>
+              </div>
+              <div id="modal-sim-gain-badge" class="sim-diff-badge" style="font-size: 14px; padding: 6px 12px; background: #dcfce7; color: #15803d; border: 1.5px solid #86efac;">
+                +0 pts
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid com Gráfico de Recuperação e Checkboxes Interativos -->
+          <div class="perdas-grid">
+            <!-- Canvas do Gráfico de Recuperação -->
+            <div class="perdas-chart-container" style="background: #ffffff; border: 1.5px solid #ccfbf1;">
+              <canvas id="chart-recuperacao-pie"></canvas>
+            </div>
+
+            <!-- Controles de Ações Corretivas -->
+            <div class="modal-sim-actions-list" style="display: flex; flex-direction: column; gap: 10px;">
+              <h4 class="perdas-factors-title" style="color: #05665f;">Intervenções Recomendadas para Reverter Perdas</h4>
+              
+              <!-- Checkbox Backup -->
+              <label class="sim-toggle-item modal-sim-toggle" style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;">
+                <input type="checkbox" id="modal-sim-check-backup" checked style="width: 18px; height: 18px; accent-color: #008d85;">
+                <div style="flex: 1;">
+                  <strong style="display: block; font-size: 12.5px; color: #0f172a;">💾 Realizar Backup Remoto Hoje</strong>
+                  <span style="font-size: 11px; color: #64748b;">Elimina a penalidade de backup e garante cópia íntegra na nuvem</span>
+                </div>
+                <span class="pts-tag" style="background: #dcfce7; color: #166534; font-weight: 800; font-size: 12px; padding: 3px 8px; border-radius: 6px;">+30 pts</span>
+              </label>
+
+              <!-- Checkbox Versão -->
+              <label class="sim-toggle-item modal-sim-toggle" style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;">
+                <input type="checkbox" id="modal-sim-check-version" checked style="width: 18px; height: 18px; accent-color: #008d85;">
+                <div style="flex: 1;">
+                  <strong style="display: block; font-size: 12.5px; color: #0f172a;">📦 Atualizar Sistema para a Versão 5.4.2</strong>
+                  <span style="font-size: 11px; color: #64748b;">Homologa regras fiscais vigentes e elimina bugs de versões antigas</span>
+                </div>
+                <span class="pts-tag" style="background: #dcfce7; color: #166534; font-weight: 800; font-size: 12px; padding: 3px 8px; border-radius: 6px;">+25 pts</span>
+              </label>
+
+              <!-- Checkbox Chamados -->
+              <label class="sim-toggle-item modal-sim-toggle" style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;">
+                <input type="checkbox" id="modal-sim-check-tickets" checked style="width: 18px; height: 18px; accent-color: #008d85;">
+                <div style="flex: 1;">
+                  <strong style="display: block; font-size: 12.5px; color: #0f172a;">🎧 Concluir Chamados Críticos de Suporte</strong>
+                  <span style="font-size: 11px; color: #64748b;">Restaura a satisfação operacional e previne abandono do cliente</span>
+                </div>
+                <span class="pts-tag" style="background: #dcfce7; color: #166534; font-weight: 800; font-size: 12px; padding: 3px 8px; border-radius: 6px;">+20 pts</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Caixa de Resultado do Diagnóstico Preditivo da Simulação -->
+          <div class="perdas-insight-box" style="background: #f0fdf4; border: 1px solid #86efac; color: #15803d;">
+            <span class="insight-icon">🎯</span>
+            <div class="insight-text">
+              <strong>Impacto Preditivo da Intervenção BVX:</strong>
+              <span id="modal-sim-insight-text">Com as intervenções proativas simuladas, este cliente sai da faixa crítica de risco e tem sua operação blindada contra paradas e abandono (churn).</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Rodapés Dinâmicos do Modal -->
+      <div class="modal-footer" id="modal-perdas-footer-analise">
         <button class="btn-primary-action" id="modal-perdas-simular-btn">
           <span class="btn-icon">⚡</span> Simular Ações de Recuperação
         </button>
         <button class="btn-secondary" id="modal-perdas-close-bottom-btn">Fechar</button>
+      </div>
+
+      <div class="modal-footer" id="modal-perdas-footer-simulacao" style="display: none;">
+        <button class="btn-primary-action" id="modal-sim-btn-os" style="background: linear-gradient(135deg, #05665f 0%, #008d85 100%);">
+          <span>🛠️</span> Gerar Ordem de Serviço Preventiva
+        </button>
+        <button class="btn-secondary" id="modal-sim-btn-laudo">
+          <span>📄</span> Laudo Técnico
+        </button>
+        <button class="btn-secondary" id="modal-sim-btn-voltar">
+          <span>📊</span> Ver Diagnóstico
+        </button>
+        <button class="btn-secondary" id="modal-sim-close-bottom-btn">Fechar</button>
       </div>
     </div>
   </div>
