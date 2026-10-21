@@ -2111,49 +2111,7 @@ body {
   transform: translateY(-1px);
 }
 
-/* Regras de Impressão / PDF */
-@media print {
-  body {
-    background: #ffffff !important;
-    color: #000000 !important;
-  }
-  
-  .top-navbar,
-  .kpis-section,
-  .alerts-banner,
-  .clients-column,
-  .simulator-box,
-  .ai-actions-box,
-  .modal-backdrop,
-  .btn-export-pdf {
-    display: none !important;
-  }
-  
-  .app-container {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-  
-  .workspace-grid {
-    display: block !important;
-  }
-  
-  .detail-column,
-  .detail-card {
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-  }
-  
-  .pillars-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-  }
-  
-  .chart-section-360 {
-    page-break-inside: avoid;
-  }
-}
+
 
 /* ==================== BOTÃO HEADER & MODAL DE EXTREMOS ==================== */
 
@@ -3595,60 +3553,215 @@ body {
   }
 }
 
-/* Regras de Impressão (O.S., Laudo ou Dossiê) */
+/* ==================== CONFIGURAÇÃO DE IMPRESSÃO A4 (O.S., LAUDO & DOSSIÊ) ==================== */
+@page {
+  size: A4 portrait;
+  margin: 6mm 8mm 6mm 8mm;
+}
+
 @media print {
-  body * {
-    visibility: hidden;
-  }
-
-  .modal-os-backdrop,
-  .modal-os-card,
-  .modal-os-body,
-  .os-sheet-a4,
-  .os-sheet-a4 *,
-  .modal-laudo-backdrop,
-  .modal-laudo-card,
-  .modal-laudo-body,
-  .laudo-sheet-a4,
-  .laudo-sheet-a4 *,
-  .modal-dossie-backdrop,
-  .modal-dossie-card,
-  .modal-dossie-body,
-  .dossie-sheet-a4,
-  .dossie-sheet-a4 * {
-    visibility: visible !important;
-  }
-
-  .modal-os-backdrop,
-  .modal-laudo-backdrop,
-  .modal-dossie-backdrop {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
+  /* Reseta página inteira para impressão */
+  html, body {
     width: 100% !important;
     height: auto !important;
-    background: #ffffff !important;
-    display: block !important;
-    padding: 0 !important;
+    min-height: 0 !important;
     margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
+  /* Oculta completamente a interface de fundo SEM deixar espaço fantasma (display: none) */
+  .app-header,
+  .bvx-hero-banner,
+  .kpi-grid,
+  .alerts-banner,
+  .workspace-grid,
+  .app-footer,
   .modal-header,
-  .modal-footer {
+  .modal-footer,
+  .modal-close-btn,
+  .extremos-tabs-nav,
+  .dropdown-menu,
+  .floating-action-btn,
+  #modal-config-api,
+  #modal-grafico-perdas {
     display: none !important;
   }
 
+  /* Oculta qualquer backdrop fechado ou com display: none */
+  .modal-backdrop[style*="display: none"] {
+    display: none !important;
+  }
+
+  /* Backdrops de documentos imprimíveis quando abertos */
+  .modal-os-backdrop,
+  .modal-laudo-backdrop,
+  .modal-dossie-backdrop,
+  .modal-extremos-backdrop {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    display: block !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .modal-os-card,
+  .modal-laudo-card,
+  .modal-dossie-card,
+  .modal-extremos-card,
+  .modal-os-body,
+  .modal-laudo-body,
+  .modal-dossie-body,
+  .modal-extremos-body {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  /* Base para as 3 Folhas Executivas A4 */
   .os-sheet-a4,
   .laudo-sheet-a4,
   .dossie-sheet-a4 {
     border: none !important;
     box-shadow: none !important;
+    border-radius: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 2px 4px !important;
+    margin: 0 auto !important;
+    background: #ffffff !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
+
+  /* ================= AJUSTES FINOS PARA CABER EXATAMENTE EM 1 PÁGINA (DOSSIÊ) ================= */
+  .dossie-header {
+    gap: 12px !important;
+    margin-bottom: 6px !important;
+  }
+  .dossie-header-brand { gap: 10px !important; }
+  .doc-brand-badge { padding: 3px 8px !important; }
+  .doc-brand-icon { width: 28px !important; height: 28px !important; }
+  .doc-brand-title { font-size: 13px !important; }
+  .doc-brand-title span { font-size: 10px !important; }
+  .doc-brand-sub { font-size: 7.5px !important; }
+  .dossie-title { font-size: 13px !important; }
+  .dossie-sub { font-size: 9.5px !important; }
+  .dossie-period, .dossie-date { font-size: 9.5px !important; }
+  .dossie-badge-risk { font-size: 8.5px !important; padding: 2px 6px !important; }
+
+  .dossie-divider { margin: 8px 0 !important; }
+  .dossie-section { margin-bottom: 8px !important; }
+  .dossie-section-title {
+    font-size: 10px !important;
+    margin: 0 0 5px 0 !important;
+    padding-bottom: 2px !important;
+  }
+
+  .dossie-kpis-grid { gap: 8px !important; }
+  .dossie-kpi-card { padding: 5px 8px !important; }
+  .dossie-kpi-label { font-size: 8.5px !important; }
+  .dossie-kpi-val { font-size: 14px !important; margin: 2px 0 1px 0 !important; }
+  .dossie-kpi-sub { font-size: 8px !important; }
+
+  .dossie-table { font-size: 8.5px !important; margin-top: 2px !important; }
+  .dossie-table th { padding: 3px 5px !important; font-size: 8.5px !important; }
+  .dossie-table td { padding: 3px 5px !important; font-size: 8.5px !important; line-height: 1.2 !important; }
+  .dossie-table-score { font-size: 8.5px !important; padding: 1px 4px !important; }
+  .dossie-table-alert { font-size: 8px !important; }
+
+  .dossie-action-plan { gap: 5px !important; }
+  .dossie-plan-item { padding: 4px 8px !important; gap: 8px !important; }
+  .plan-badge { font-size: 8px !important; padding: 2px 5px !important; }
+  .plan-body { font-size: 8.5px !important; line-height: 1.2 !important; }
+
+  .dossie-footer-row {
+    margin-top: 8px !important;
+    padding-top: 6px !important;
+    gap: 20px !important;
+  }
+  .dossie-sign-line { width: 55% !important; margin-bottom: 3px !important; }
+  .dossie-sign-role { font-size: 9px !important; }
+  .dossie-sign-corp { font-size: 8px !important; }
+
+  /* ================= AJUSTES FINOS PARA CABER EM 1 PÁGINA (ORDEM DE SERVIÇO) ================= */
+  .os-header { gap: 12px !important; margin-bottom: 6px !important; }
+  .os-company-name { font-size: 13.5px !important; }
+  .os-company-sub { font-size: 9.5px !important; }
+  .os-company-meta { font-size: 8.5px !important; }
+  .os-number-badge { font-size: 11px !important; padding: 2px 6px !important; }
+  .os-date-row { font-size: 9.5px !important; }
+  .os-priority-badge { font-size: 9px !important; padding: 2px 6px !important; }
+  .os-divider { margin: 8px 0 !important; }
+  .os-section { margin-bottom: 8px !important; }
+  .os-section-title { font-size: 10px !important; margin: 0 0 5px 0 !important; padding-bottom: 2px !important; }
+  .os-grid-2col { gap: 4px 12px !important; font-size: 9.5px !important; }
+  .os-telemetry-box { gap: 6px !important; padding: 6px !important; }
+  .os-kpi-pill { font-size: 9px !important; padding: 3px 6px !important; }
+  .os-alert-text-box { font-size: 9px !important; padding: 6px !important; margin-top: 5px !important; }
+  .os-checklist-table { font-size: 8.5px !important; }
+  .os-checklist-table th, .os-checklist-table td { padding: 3px 6px !important; font-size: 8.5px !important; }
+  .os-note-line { font-size: 8.5px !important; }
+  .os-signatures-row { gap: 20px !important; margin-top: 8px !important; }
+  .os-sign-line { width: 60% !important; margin-bottom: 3px !important; }
+  .os-sign-label { font-size: 9px !important; }
+  .os-sign-sub { font-size: 8px !important; }
+
+  /* ================= AJUSTES FINOS PARA CABER EM 1 PÁGINA (LAUDO TÉCNICO) ================= */
+  .laudo-header { gap: 12px !important; margin-bottom: 6px !important; }
+  .laudo-title { font-size: 13px !important; }
+  .laudo-sub { font-size: 9.5px !important; }
+  .laudo-protocol, .laudo-date { font-size: 9px !important; }
+  .laudo-badge-status { font-size: 8.5px !important; padding: 2px 6px !important; }
+  .laudo-divider { margin: 8px 0 !important; }
+  .laudo-client-box { padding: 8px 12px !important; margin-bottom: 10px !important; }
+  .laudo-intro { font-size: 9.5px !important; margin-bottom: 4px !important; }
+  .laudo-body-text { font-size: 9px !important; }
+  .laudo-pillars-section { gap: 6px !important; margin-bottom: 10px !important; }
+  .laudo-pillar-card { padding: 6px 10px !important; }
+  .laudo-pillar-title { font-size: 9.5px !important; }
+  .laudo-pillar-desc { font-size: 8.5px !important; }
+  .laudo-stamp { font-size: 8.5px !important; padding: 2px 6px !important; }
+  .laudo-pillar-detail { font-size: 8.5px !important; margin-top: 4px !important; }
+  .laudo-advice-box { padding: 6px 10px !important; margin-bottom: 10px !important; }
+  .laudo-advice-title { font-size: 9.5px !important; margin-bottom: 3px !important; }
+  #laudo-advice-text { font-size: 8.5px !important; }
+  .laudo-footer-box { gap: 16px !important; }
+  .laudo-digital-seal { padding: 4px 8px !important; }
+  .seal-text strong { font-size: 9.5px !important; }
+  .seal-text span { font-size: 8px !important; }
+  .seal-sub { font-size: 7.5px !important; }
+  .laudo-sign-line { width: 160px !important; margin-bottom: 3px !important; }
+  .laudo-sign-name { font-size: 9px !important; }
+  .laudo-sign-corp { font-size: 8px !important; }
+  .laudo-sign-contact { font-size: 7.5px !important; }
 }
+
 
 
 
