@@ -127,7 +127,7 @@
     
     <!-- Seção de KPIs do Dashboard Geral -->
     <section class="kpi-grid" id="kpi-section">
-      <div class="kpi-card" id="kpi-health">
+      <div class="kpi-card" id="kpi-health" title="Clique para ver todos os clientes da fila de priorização">
         <div class="kpi-header">
           <span class="kpi-label">Índice Médio de Saúde (CHS)</span>
           <span class="kpi-icon">🎯</span>
@@ -139,10 +139,10 @@
         <div class="kpi-progress-bar">
           <div class="progress-fill" id="avg-health-fill" style="width: 0%"></div>
         </div>
-        <span class="kpi-hint">Média ponderada da carteira</span>
+        <span class="kpi-hint">Média da carteira • <span class="kpi-action-link">Ver Fila ➔</span></span>
       </div>
 
-      <div class="kpi-card danger-card" id="kpi-high-risk">
+      <div class="kpi-card danger-card" id="kpi-high-risk" title="Clique para filtrar a fila pelos clientes em Alto Risco">
         <div class="kpi-header">
           <span class="kpi-label">Clientes em Alto Risco</span>
           <span class="kpi-icon">🚨</span>
@@ -151,10 +151,10 @@
           <span class="kpi-number text-danger" id="count-high-risk">--</span>
           <span class="kpi-badge badge-danger">Prioridade Suporte</span>
         </div>
-        <span class="kpi-hint" id="pct-high-risk">--% da base ativa</span>
+        <span class="kpi-hint"><span id="pct-high-risk">--% da base ativa</span> • <span class="kpi-action-link">Filtrar ➔</span></span>
       </div>
 
-      <div class="kpi-card warning-card" id="kpi-attention">
+      <div class="kpi-card warning-card" id="kpi-attention" title="Clique para filtrar a fila pelos clientes em Atenção">
         <div class="kpi-header">
           <span class="kpi-label">Em Atenção</span>
           <span class="kpi-icon">⚠️</span>
@@ -163,10 +163,10 @@
           <span class="kpi-number text-warning" id="count-attention">--</span>
           <span class="kpi-badge badge-warning">Acompanhar</span>
         </div>
-        <span class="kpi-hint" id="pct-attention">Sinais moderados de oscilação</span>
+        <span class="kpi-hint"><span id="pct-attention">Sinais moderados</span> • <span class="kpi-action-link">Filtrar ➔</span></span>
       </div>
 
-      <div class="kpi-card success-card" id="kpi-healthy">
+      <div class="kpi-card success-card" id="kpi-healthy" title="Clique para filtrar a fila pelos clientes Saudáveis">
         <div class="kpi-header">
           <span class="kpi-label">Base Saudável</span>
           <span class="kpi-icon">🛡️</span>
@@ -175,10 +175,10 @@
           <span class="kpi-number text-success" id="count-healthy">--</span>
           <span class="kpi-badge badge-success">Operação Segura</span>
         </div>
-        <span class="kpi-hint" id="pct-healthy">Versão e backups em dia</span>
+        <span class="kpi-hint"><span id="pct-healthy">Versão e backups em dia</span> • <span class="kpi-action-link">Filtrar ➔</span></span>
       </div>
 
-      <div class="kpi-card revenue-card" id="kpi-revenue">
+      <div class="kpi-card revenue-card" id="kpi-revenue" title="Clique para abrir o Dossiê Executivo de Faturamento e Receita em Risco">
         <div class="kpi-header">
           <span class="kpi-label">Faturamento Diário Monitorado</span>
           <span class="kpi-icon">💰</span>
@@ -186,11 +186,11 @@
         <div class="kpi-value-row">
           <span class="kpi-number text-cyan" id="total-revenue">R$ --</span>
         </div>
-        <span class="kpi-hint">Transacionado nos PDVs dos clientes</span>
+        <span class="kpi-hint">Transacionado nos PDVs • <span class="kpi-action-link">Abrir Dossiê ➔</span></span>
       </div>
 
       <!-- Gráfico de Distribuição de Risco (Doughnut) -->
-      <div class="kpi-card chart-card" id="kpi-chart-risk">
+      <div class="kpi-card chart-card" id="kpi-chart-risk" title="Clique para abrir a Análise Estratégica de Extremos">
         <div class="kpi-header">
           <span class="kpi-label">Distribuição de Risco da Carteira</span>
           <span class="kpi-icon">📊</span>

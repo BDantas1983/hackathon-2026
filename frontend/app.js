@@ -545,7 +545,25 @@ async function acionarMensagemIA(canal) {
 // ==================== CONFIGURAÇÃO DE EVENTOS ====================
 
 function configurarEventos() {
-  // Filtros de Risco
+  // Função auxiliar para aplicar filtro de risco e rolar suavemente até a Fila de Clientes
+  function aplicarFiltroRiscoComScroll(filtro) {
+    document.querySelectorAll('.filter-chip[data-filter]').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-filter') === filtro);
+    });
+    currentFilter = filtro;
+    renderizarListaClientes();
+
+    const target = document.querySelector('.clients-column');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target.classList.remove('clients-column-highlight');
+      void target.offsetWidth;
+      target.classList.add('clients-column-highlight');
+      setTimeout(() => target.classList.remove('clients-column-highlight'), 1800);
+    }
+  }
+
+  // Filtros de Risco (Chips da lista)
   document.querySelectorAll('.filter-chip[data-filter]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       document.querySelectorAll('.filter-chip[data-filter]').forEach(b => b.classList.remove('active'));
@@ -554,6 +572,49 @@ function configurarEventos() {
       renderizarListaClientes();
     });
   });
+
+  // Cliques nos Cards de KPI (Redirecionamento para informação compatível)
+  const cardHealth = document.getElementById('kpi-health');
+  if (cardHealth) {
+    cardHealth.addEventListener('click', () => {
+      aplicarFiltroRiscoComScroll('all');
+    });
+  }
+
+  const cardHighRisk = document.getElementById('kpi-high-risk');
+  if (cardHighRisk) {
+    cardHighRisk.addEventListener('click', () => {
+      aplicarFiltroRiscoComScroll('ALTO RISCO');
+    });
+  }
+
+  const cardAttention = document.getElementById('kpi-attention');
+  if (cardAttention) {
+    cardAttention.addEventListener('click', () => {
+      aplicarFiltroRiscoComScroll('ATENÇÃO');
+    });
+  }
+
+  const cardHealthy = document.getElementById('kpi-healthy');
+  if (cardHealthy) {
+    cardHealthy.addEventListener('click', () => {
+      aplicarFiltroRiscoComScroll('BAIXO RISCO');
+    });
+  }
+
+  const cardRevenue = document.getElementById('kpi-revenue');
+  if (cardRevenue) {
+    cardRevenue.addEventListener('click', () => {
+      abrirModalDossie();
+    });
+  }
+
+  const cardChartRisk = document.getElementById('kpi-chart-risk');
+  if (cardChartRisk) {
+    cardChartRisk.addEventListener('click', () => {
+      abrirModalExtremos();
+    });
+  }
 
   // Filtro Backup Crítico
   const btnBackup = document.getElementById('filter-backup-btn');

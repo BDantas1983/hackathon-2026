@@ -597,16 +597,59 @@ body {
   border-radius: var(--radius-lg);
   padding: 20px;
   box-shadow: var(--shadow-card);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
   position: relative;
   overflow: hidden;
   border-top: 4px solid var(--bvx-primary);
+  cursor: pointer;
+  user-select: none;
 }
 
 .kpi-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-card-hover);
-  border-color: #cbd5e1;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  border-color: #94a3b8;
+}
+
+.kpi-card:active {
+  transform: translateY(-1px);
+}
+
+.kpi-action-link {
+  font-weight: 800;
+  color: var(--bvx-primary);
+  transition: all 0.2s ease;
+}
+
+.kpi-card:hover .kpi-action-link {
+  color: var(--bvx-teal);
+  text-decoration: underline;
+}
+
+.danger-card:hover .kpi-action-link {
+  color: var(--color-danger);
+}
+
+.warning-card:hover .kpi-action-link {
+  color: var(--color-warning);
+}
+
+.success-card:hover .kpi-action-link {
+  color: var(--color-success);
+}
+
+.revenue-card:hover .kpi-action-link {
+  color: var(--bvx-teal);
+}
+
+.clients-column-highlight {
+  animation: listPulseHighlight 1.5s ease-in-out;
+}
+
+@keyframes listPulseHighlight {
+  0% { box-shadow: 0 0 0 0 rgba(0, 141, 133, 0.6); }
+  50% { box-shadow: 0 0 22px 6px rgba(0, 141, 133, 0.35); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 141, 133, 0); }
 }
 
 .danger-card {
