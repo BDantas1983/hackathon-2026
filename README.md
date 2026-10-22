@@ -2,6 +2,8 @@
 
 > **XX Semana de Tecnologia e Hackathon FATECOU 2026**  
 > **Desafio BVX Tecnologia:** *"CLIENTE 360! Quem precisa da nossa atenção antes que um problema aconteça?"*  
+> **Grupo:** **Fundação**  
+> **Integrantes da Equipe:** **Adolfo**, **Brisa** e **João Lucas**  
 > **Compromisso ODS (ONU):** **ODS 8** (Trabalho Decente e Crescimento Econômico) & **ODS 9** (Indústria, Inovação e Infraestrutura).
 
 ---
